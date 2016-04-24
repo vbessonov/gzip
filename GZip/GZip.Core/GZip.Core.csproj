@@ -40,6 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeflateFlags.cs" />
+    <Compile Include="Extensions\BinaryReaderExtensions.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="GZipBlock.cs" />
+    <Compile Include="GZipBlockException.cs" />
+    <Compile Include="GZipBlockFlags.cs" />
+    <Compile Include="GZipBlockReader.cs" />
+    <Compile Include="GZipBlockWriter.cs" />
+    <Compile Include="GZipFlags.cs" />
+    <Compile Include="IGZipBlockReader.cs" />
+    <Compile Include="IGZipBlockWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
