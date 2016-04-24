@@ -49,8 +49,11 @@
     <Compile Include="GZipBlockReader.cs" />
     <Compile Include="GZipBlockWriter.cs" />
     <Compile Include="GZipFlags.cs" />
+    <Compile Include="GZipMultiStreamHeader.cs" />
+    <Compile Include="GZipMultiStreamHeaderItem.cs" />
     <Compile Include="IGZipBlockReader.cs" />
     <Compile Include="IGZipBlockWriter.cs" />
+    <Compile Include="ISerializable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
