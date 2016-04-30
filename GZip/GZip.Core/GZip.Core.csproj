@@ -60,16 +60,11 @@
     <Compile Include="Compression\Streams\MemoryMappedFileChunk.cs" />
     <Compile Include="GZipCompressor.cs" />
     <Compile Include="GZipFlags.cs" />
-    <Compile Include="GZipMultiStreamCollection.cs" />
     <Compile Include="GZipMultiStreamHeader.cs" />
     <Compile Include="GZipMultiStreamHeaderItem.cs" />
-    <Compile Include="GZipMultiStreamReader.cs" />
-    <Compile Include="GZipMultiStreamWriter.cs" />
     <Compile Include="Compression\ICompressorReader.cs" />
     <Compile Include="IGZipBlockReader.cs" />
     <Compile Include="IGZipBlockWriter.cs" />
-    <Compile Include="IGZipMultiStreamReader.cs" />
-    <Compile Include="IGZipMultiStreamWriter.cs" />
     <Compile Include="ISerializable.cs" />
     <Compile Include="Compression\Streams\OutputStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
