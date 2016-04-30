@@ -6,6 +6,11 @@ namespace VBessonov.GZip.Core.Workers
 {
     internal class CompressionWorker : ThreadWorker<InputQueue>
     {
+        public CompressionWorker()
+        {
+            Thread.Name = "Compression Worker";
+        }
+
         protected override void ThreadBody(object parameter)
         {
             WorkerParameter<InputQueue> workerParameter = parameter as WorkerParameter<InputQueue>;

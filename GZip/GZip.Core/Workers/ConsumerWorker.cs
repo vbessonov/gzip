@@ -5,6 +5,11 @@ namespace VBessonov.GZip.Core.Workers
 {
     internal class ConsumerWorker : ThreadWorker<OutputQueue>
     {
+        public ConsumerWorker()
+        {
+            Thread.Name = "Consumer Worker";
+        }
+
         protected override void ThreadBody(object parameter)
         {
             WorkerParameter<OutputQueue> workerParameter = parameter as WorkerParameter<OutputQueue>;
