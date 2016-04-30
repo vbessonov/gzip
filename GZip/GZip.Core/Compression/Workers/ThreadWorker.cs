@@ -16,7 +16,12 @@ namespace VBessonov.GZip.Core.Compression.Workers
             _thread = new Thread(ThreadBody);
         }
 
-        protected abstract void ThreadBody(object parameter);
+        private void ThreadBody(object parameter)
+        {
+            InternalWork((WorkerParameter<T>)parameter);
+        }
+
+        protected abstract void InternalWork(WorkerParameter<T> parameter);
 
         public void Work(WorkerParameter<T> parameter)
         {

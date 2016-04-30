@@ -12,16 +12,9 @@ namespace VBessonov.GZip.Core.Compression.Workers
             Thread.Name = "Compression Worker";
         }
 
-        protected override void ThreadBody(object parameter)
+        protected override void InternalWork(WorkerParameter<InputQueue> parameter)
         {
-            WorkerParameter<InputQueue> workerParameter = parameter as WorkerParameter<InputQueue>;
-
-            if (workerParameter == null)
-            {
-                throw new ArgumentException("Parameter must be an instance of CompressionWorkerParameter class");
-            }
-
-            InputQueue inputQueue = workerParameter.Parameter;
+            InputQueue inputQueue = parameter.Parameter;
 
             while (true)
             {

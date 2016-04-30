@@ -10,16 +10,9 @@ namespace VBessonov.GZip.Core.Compression.Workers
             Thread.Name = "Consumer Worker";
         }
 
-        protected override void ThreadBody(object parameter)
+        protected override void InternalWork(WorkerParameter<OutputQueue> parameter)
         {
-            WorkerParameter<OutputQueue> workerParameter = parameter as WorkerParameter<OutputQueue>;
-
-            if (workerParameter == null)
-            {
-                throw new ArgumentException("Incorrect parameter");
-            }
-
-            OutputQueue outputQueue = workerParameter.Parameter;
+            OutputQueue outputQueue = parameter.Parameter;
             Stream outputFileStream = null;
 
             int index = 0;
