@@ -2,7 +2,7 @@
 
 namespace VBessonov.GZip.Core.Extensions
 {
-    public static class DateTimeExtensions
+    internal static class DateTimeExtensions
     {
         public static long ToUnixTimeSeconds(this DateTime dateTime)
         {

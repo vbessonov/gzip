@@ -4,7 +4,7 @@ using System.Text;
 
 namespace VBessonov.GZip.Core.Extensions
 {
-    public static class BinaryReaderExtensions
+    internal static class BinaryReaderExtensions
     {
         private const char NULL = '\0';
 
