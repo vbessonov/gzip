@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     public interface IWorker<T>
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using VBessonov.GZip.Core.Compression.Streams;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     internal class CompressionWorker : ThreadWorker<InputQueue>
     {
@@ -42,7 +43,7 @@ namespace VBessonov.GZip.Core.Workers
 
                 using (GZipStream compressionStream = new GZipStream(workItem.OutputStream.Stream, CompressionMode.Compress, true))
                 {
-                    foreach (IInputStreamChunk inputStreamChunk in workItem.InputStream.Chunks)
+                    foreach (IStreamChunk inputStreamChunk in workItem.InputStream.Chunks)
                     {
                         using (Stream chunkStream = new BufferedStream(inputStreamChunk.Stream))
                         {

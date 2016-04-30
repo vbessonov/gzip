@@ -2,9 +2,9 @@
 using System.IO;
 using System.IO.MemoryMappedFiles;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal class MemoryMappedFileChunk : InputStreamChunk
+    internal class MemoryMappedFileChunk : AbstractStreamChunk
     {
         private readonly MemoryMappedFile _file;
 

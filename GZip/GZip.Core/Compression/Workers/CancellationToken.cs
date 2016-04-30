@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     public class CancellationToken
     {

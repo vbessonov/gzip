@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 
 namespace VBessonov.GZip.Core
 {
-    public class GZipMultiStreamReader : IGZipMultiStreamReader
+    public class GZipMultiStreamReader //: IGZipMultiStreamReader
     {
         private IGZipBlockReader _blockReader;
 
@@ -31,45 +32,62 @@ namespace VBessonov.GZip.Core
             _blockReader = blockReader;
         }
 
-        public GZipMultiStreamCollection Read(Stream stream)
+        public GZipMultiStreamCollection Read(FileInfo fileInfo)
         {
-            if (stream == null)
+            if (fileInfo == null)
             {
-                throw new ArgumentNullException("Stream must be non-empty");
+                throw new ArgumentNullException("File info must be non-empty");
             }
 
             GZipMultiStreamCollection multiStreamCollection = new GZipMultiStreamCollection();
-            GZipBlock block = _blockReader.Read(stream, GZipBlockFlags.ExtraField);
+            MemoryMappedFile memoryMappedFile = MemoryMappedFile.CreateFromFile(fileInfo.FullName);
 
-            if (block.ExtraField != null ||
-                block.ExtraField.Length == 0 ||
-                (block.ExtraField.Length % GZipMultiStreamHeaderItem.Size) != 0)
+            if (fileInfo.Length < 2 << 16)
             {
-                multiStreamCollection.Streams.Add(stream);
+                multiStreamCollection.Streams.Add(memoryMappedFile.CreateViewStream());
             }
             else
             {
-                GZipMultiStreamHeader header = new GZipMultiStreamHeader();
+                GZipBlock block = null;
 
-                header.Deserialize(block.ExtraField);
-
-                int offset = 0;
-
-                foreach (GZipMultiStreamHeaderItem item in header.Items)
+                // TODO: Theoretically header may be larger than 1024 bytes
+                using (Stream stream = memoryMappedFile.CreateViewStream(0, 1024))
                 {
-                    byte[] buffer = new byte[item.Length];
-                    int readedBytes = stream.Read(buffer, offset, item.Length);
+                    block = _blockReader.Read(stream, GZipBlockFlags.ExtraField);
+                }
 
-                    if (readedBytes < item.Length)
-                    {
-                        throw new ArgumentException("Invalid stream");
-                    }
+                if (block.ExtraField != null ||
+                    block.ExtraField.Length == 0 ||
+                    (block.ExtraField.Length % GZipMultiStreamHeaderItem.Size) != 0)
+                {
+                    //multiStreamCollection.Streams.Add(file);
+                }
+                else
+                {
+                    GZipMultiStreamHeader header = new GZipMultiStreamHeader();
 
-                    MemoryStream memoryStream = new MemoryStream(buffer);
+                    header.Deserialize(block.ExtraField);
 
-                    multiStreamCollection.Streams.Add(memoryStream);
+                    int offset = 0;
+
+                    //foreach (GZipMultiStreamHeaderItem item in header.Items)
+                    //{
+                    //    byte[] buffer = new byte[item.Length];
+                    //    int readedBytes = file.Read(buffer, offset, item.Length);
+
+                    //    if (readedBytes < item.Length)
+                    //    {
+                    //        throw new ArgumentException("Invalid stream");
+                    //    }
+
+                    //    MemoryStream memoryStream = new MemoryStream(buffer);
+
+                    //    multiStreamCollection.Streams.Add(memoryStream);
+                    //}
                 }
             }
+
+            
 
             return multiStreamCollection;
         }

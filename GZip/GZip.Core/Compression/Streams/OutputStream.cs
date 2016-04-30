@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression.Streams
 {
     public class OutputStream
     {

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression.Streams
 {
-    public interface IInputStreamChunk
+    public interface IStreamChunk
     {
         int Index { get; }
 

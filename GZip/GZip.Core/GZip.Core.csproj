@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compression\CompressionException.cs" />
+    <Compile Include="Compression\Compressor.cs" />
+    <Compile Include="Compression\CompressorReader.cs" />
+    <Compile Include="Compression\CompressorReaderSettings.cs" />
     <Compile Include="DeflateFlags.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
@@ -48,13 +53,41 @@
     <Compile Include="GZipBlockFlags.cs" />
     <Compile Include="GZipBlockReader.cs" />
     <Compile Include="GZipBlockWriter.cs" />
+    <Compile Include="GZipDecompressor.cs" />
+    <Compile Include="Compression\Streams\IStreamChunk.cs" />
+    <Compile Include="Compression\Streams\InputStream.cs" />
+    <Compile Include="Compression\Streams\AbstractStreamChunk.cs" />
+    <Compile Include="Compression\Streams\MemoryMappedFileChunk.cs" />
+    <Compile Include="GZipCompressor.cs" />
     <Compile Include="GZipFlags.cs" />
+    <Compile Include="GZipMultiStreamCollection.cs" />
     <Compile Include="GZipMultiStreamHeader.cs" />
     <Compile Include="GZipMultiStreamHeaderItem.cs" />
+    <Compile Include="GZipMultiStreamReader.cs" />
+    <Compile Include="GZipMultiStreamWriter.cs" />
+    <Compile Include="Compression\ICompressorReader.cs" />
     <Compile Include="IGZipBlockReader.cs" />
     <Compile Include="IGZipBlockWriter.cs" />
+    <Compile Include="IGZipMultiStreamReader.cs" />
+    <Compile Include="IGZipMultiStreamWriter.cs" />
     <Compile Include="ISerializable.cs" />
+    <Compile Include="Compression\Streams\OutputStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Compression\Streams\StreamChunk.cs" />
+    <Compile Include="WinApi\SystemInfo.cs" />
+    <Compile Include="Compression\Streams\TempFileStream.cs" />
+    <Compile Include="WinApi\ProcessorArchitecture.cs" />
+    <Compile Include="Compression\Workers\CancellationToken.cs" />
+    <Compile Include="Compression\Workers\CancellationTokenSource.cs" />
+    <Compile Include="Compression\Workers\CompressionOutputWorkItem.cs" />
+    <Compile Include="Compression\Workers\CompressionInputWorkItem.cs" />
+    <Compile Include="Compression\Workers\ConsumerWorker.cs" />
+    <Compile Include="Compression\Workers\CompressionWorker.cs" />
+    <Compile Include="Compression\Workers\InputQueue.cs" />
+    <Compile Include="Compression\Workers\IWorker.cs" />
+    <Compile Include="Compression\Workers\OutputQueue.cs" />
+    <Compile Include="Compression\Workers\ThreadWorker.cs" />
+    <Compile Include="Compression\Workers\WorkerParameter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

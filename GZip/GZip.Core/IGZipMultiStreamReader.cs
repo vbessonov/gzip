@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.IO.MemoryMappedFiles;
 
 namespace VBessonov.GZip.Core
 {
     public interface IGZipMultiStreamReader
     {
-        GZipMultiStreamCollection Read(Stream stream);
+        GZipMultiStreamCollection Read(MemoryMappedFile file);
     }
 }

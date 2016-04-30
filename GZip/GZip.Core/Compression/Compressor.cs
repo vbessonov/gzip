@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using VBessonov.GZip.Core.Workers;
+using VBessonov.GZip.Core.Compression.Streams;
+using VBessonov.GZip.Core.Compression.Workers;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression
 {
     public class Compressor
     {

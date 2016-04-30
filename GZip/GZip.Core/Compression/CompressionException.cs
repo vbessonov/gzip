@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression
 {
     public class CompressionException : Exception
     {

@@ -11,23 +11,19 @@ namespace VBessonov.GZip.CoreTests
 
         public static Stream Compress(int count)
         {
-            StringBuilder buffer = new StringBuilder();
-
-            for (int i = 0; i < count; i++)
-            {
-                buffer.AppendLine(Pattern);
-            }
-
+            byte[] buffer = Encoding.ASCII.GetBytes(Pattern);
             MemoryStream outputStream = null;
 
             try
             {
                 outputStream = new MemoryStream();
 
-                using (MemoryStream inputStream = new MemoryStream(Encoding.ASCII.GetBytes(buffer.ToString())))
                 using (GZipStream compressionStream = new GZipStream(outputStream, CompressionMode.Compress, true))
                 {
-                    inputStream.CopyTo(compressionStream);
+                    for (int i = 0; i < count; i++)
+                    {
+                        compressionStream.Write(buffer, 0, buffer.Length);
+                    }
                 }
             }
             catch (Exception)

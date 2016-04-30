@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     internal class ConsumerWorker : ThreadWorker<OutputQueue>
     {

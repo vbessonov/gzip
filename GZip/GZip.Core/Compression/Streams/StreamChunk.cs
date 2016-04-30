@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal class StreamChunk : InputStreamChunk
+    internal class StreamChunk : AbstractStreamChunk
     {
         private readonly Stream _stream;
 

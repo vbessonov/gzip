@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal abstract class InputStreamChunk : IInputStreamChunk
+    internal abstract class AbstractStreamChunk : IStreamChunk
     {
         private readonly int _index;
 
@@ -16,7 +16,7 @@ namespace VBessonov.GZip.Core
             get { return _index; }
         }
 
-        protected InputStreamChunk(int index)
+        protected AbstractStreamChunk(int index)
         {
             if (index < 0)
             {

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     internal abstract class ThreadWorker<T> : IWorker<T>
     {

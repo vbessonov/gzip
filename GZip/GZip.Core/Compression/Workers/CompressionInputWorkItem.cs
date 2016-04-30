@@ -1,6 +1,7 @@
 ﻿using System;
+using VBessonov.GZip.Core.Compression.Streams;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     internal class CompressionInputWorkItem
     {

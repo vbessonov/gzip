@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using VBessonov.GZip.Core.Compression.Streams;
 using VBessonov.GZip.Core.WinApi;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression
 {
     public class CompressorReader : ICompressorReader
     {
@@ -32,7 +33,7 @@ namespace VBessonov.GZip.Core
             if (size < chunkSize)
             {
                 InputStream inputStream = new InputStream(0);
-                IInputStreamChunk inputStreamChunk = new StreamChunk(0, fileInfo.Open(FileMode.Open));
+                IStreamChunk inputStreamChunk = new StreamChunk(0, fileInfo.Open(FileMode.Open));
 
                 inputStream.Chunks.Add(inputStreamChunk);
                 inputStreams.Add(inputStream);
@@ -53,7 +54,7 @@ namespace VBessonov.GZip.Core
                         chunkSize = (int)size;
                     }
 
-                    IInputStreamChunk inputStreamChunk = new MemoryMappedFileChunk(chunkIndex, memoryMappedFile, offset, chunkSize);
+                    IStreamChunk inputStreamChunk = new MemoryMappedFileChunk(chunkIndex, memoryMappedFile, offset, chunkSize);
                     inputStream.Chunks.Add(inputStreamChunk);
 
                     chunkIndex++;

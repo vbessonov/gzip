@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using VBessonov.GZip.Core.Compression.Streams;
 
-namespace VBessonov.GZip.Core
+namespace VBessonov.GZip.Core.Compression
 {
     public interface ICompressorReader
     {

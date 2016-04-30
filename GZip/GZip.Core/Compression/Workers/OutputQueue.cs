@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace VBessonov.GZip.Core.Workers
+namespace VBessonov.GZip.Core.Compression.Workers
 {
     internal class OutputQueue : SynchronizedKeyedCollection<int, CompressionOutputWorkItem>
     {
