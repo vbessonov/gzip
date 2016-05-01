@@ -55,7 +55,20 @@ namespace VBessonov.GZip.CUI
         private static int Compress(CompressSubOptions options)
         {
             int resultCode = 1;
-            Compressor compressor = new Compressor();
+            ICompressor compressor = new Compressor();
+
+            if (options.WorkersCount.HasValue)
+            {
+                compressor.Settings.WorkersCount = options.WorkersCount.Value;
+            }
+            if (options.StreamsCount.HasValue)
+            {
+                compressor.Settings.Reader.Settings.StreamsCount = options.StreamsCount.Value;
+            }
+            if (options.ChunkSize.HasValue)
+            {
+                compressor.Settings.Reader.Settings.ChunkSize = options.ChunkSize.Value;
+            }
 
             try
             {

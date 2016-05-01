@@ -9,26 +9,51 @@ namespace VBessonov.GZip.Core.Compression
 {
     public class CompressorReader : ICompressorReader
     {
-        public IEnumerable<InputStream> Read(string fileName)
+        private readonly CompressorReaderSettings _settings;
+
+        public CompressorReaderSettings Settings
         {
-            return Read(fileName, new CompressorReaderSettings());
+            get { return _settings; }
         }
 
-        public IEnumerable<InputStream> Read(string fileName, CompressorReaderSettings settings)
+        public CompressorReader()
+            : this(CreateDefaultSettings())
+        {
+
+        }
+
+        public CompressorReader(CompressorReaderSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException("Settings must be non-empty");
+            }
+
+            _settings = settings;
+        }
+
+        private static CompressorReaderSettings CreateDefaultSettings()
+        {
+            CompressorReaderSettings settings = new CompressorReaderSettings
+            {
+                StreamsCount = 1,
+                ChunkSize = (int)SystemInfo.Current.AllocationGranularity * 16
+            };
+
+            return settings;
+        }
+
+        public IEnumerable<InputStream> Read(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
                 throw new ArgumentException("Input file name must be non-empty");
             }
-            if (settings == null)
-            {
-                throw new ArgumentNullException("Compressor settings must be non-empty");
-            }
 
             List<InputStream> inputStreams = new List<InputStream>();
             FileInfo fileInfo = new FileInfo(fileName);
             long size = fileInfo.Length;
-            int chunkSize = (int)SystemInfo.Current.AllocationGranularity * 16;
+            int chunkSize = _settings.ChunkSize;
 
             if (size < chunkSize)
             {
@@ -41,7 +66,7 @@ namespace VBessonov.GZip.Core.Compression
             else
             {
                 long offset = 0;
-                long streamsCount = settings.StreamsCount;
+                long streamsCount = _settings.StreamsCount;
                 long chunksCount = size / (streamsCount * chunkSize);
                 int chunkIndex = 0;
                 InputStream inputStream = new InputStream(0);

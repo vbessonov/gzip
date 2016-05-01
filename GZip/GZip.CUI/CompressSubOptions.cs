@@ -9,7 +9,7 @@ namespace Vbessonov.GZip.CUI
         [Option("streams-count", Required = false, HelpText = "Number of gzip streams to create.")]
         public int? StreamsCount { get; set; }
 
-        [Option("threads-count", Required = false, HelpText = "Number of threads using for compression.")]
-        public int? ThreadsCount { get; set; }
+        [Option("workers-count", Required = false, HelpText = "Number of threads using for compression.")]
+        public int? WorkersCount { get; set; }
     }
 }

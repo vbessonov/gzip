@@ -5,8 +5,8 @@ namespace VBessonov.GZip.Core.Compression
 {
     public interface ICompressorReader
     {
-        IEnumerable<InputStream> Read(string fileName);
+        CompressorReaderSettings Settings { get; }
 
-        IEnumerable<InputStream> Read(string fileName, CompressorReaderSettings settings);
+        IEnumerable<InputStream> Read(string fileName);
     }
 }

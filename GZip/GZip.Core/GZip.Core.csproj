@@ -45,6 +45,8 @@
     <Compile Include="Compression\Compressor.cs" />
     <Compile Include="Compression\CompressorReader.cs" />
     <Compile Include="Compression\CompressorReaderSettings.cs" />
+    <Compile Include="Compression\CompressorSettings.cs" />
+    <Compile Include="Compression\ICompressor.cs" />
     <Compile Include="DeflateFlags.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
