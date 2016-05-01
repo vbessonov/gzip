@@ -53,7 +53,7 @@ namespace VBessonov.GZip.Core.Compression.Workers
                     }
                 }
 
-                workItem.OutputQueue.Add(new CompressionOutputWorkItem("test.gz", workItem.OutputStream));
+                workItem.OutputQueue.Add(new CompressionOutputWorkItem(workItem.OutputStream));
             }
         }
     }

@@ -78,7 +78,6 @@
     <Compile Include="Compression\Workers\CancellationTokenSource.cs" />
     <Compile Include="Compression\Workers\CompressionOutputWorkItem.cs" />
     <Compile Include="Compression\Workers\CompressionInputWorkItem.cs" />
-    <Compile Include="Compression\Workers\ConsumerWorker.cs" />
     <Compile Include="Compression\Workers\CompressionWorker.cs" />
     <Compile Include="Compression\Workers\InputQueue.cs" />
     <Compile Include="Compression\Workers\IWorker.cs" />
