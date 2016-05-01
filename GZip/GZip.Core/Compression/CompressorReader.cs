@@ -68,6 +68,12 @@ namespace VBessonov.GZip.Core.Compression
                 long offset = 0;
                 long streamsCount = _settings.StreamsCount;
                 long chunksCount = size / (streamsCount * chunkSize);
+
+                if (chunksCount == 0)
+                {
+                    throw new CompressionException("Streams count or chunk size are too big");
+                }
+
                 int chunkIndex = 0;
                 InputStream inputStream = new InputStream(0);
                 MemoryMappedFile memoryMappedFile = MemoryMappedFile.CreateFromFile(fileName);
