@@ -81,8 +81,37 @@ namespace VBessonov.GZip.Core.Compression
                 compressionWorker.Work(new WorkerParameter<InputQueue> { Parameter = inputQueue });
             }
 
-            ConsumerWorker consumerWorker = new ConsumerWorker();
-            consumerWorker.Work(new WorkerParameter<OutputQueue> { Parameter = outputQueue });
+            using (Stream outputFileStream = File.Create(outputFile))
+            {
+                index = 0;
+
+                while (true)
+                {
+                    if (!outputQueue.Contains(index))
+                    {
+                        outputQueue.Event.WaitOne();
+                    }
+                    else
+                    {
+                        CompressionOutputWorkItem workItem = outputQueue[index];
+
+                        using (Stream compressedStream = workItem.OutputStream.Stream)
+                        {
+                            compressedStream.Position = 0;
+                            compressedStream.CopyTo(outputFileStream);
+                        }
+
+                        outputQueue.Remove(index);
+
+                        index++;
+
+                        if (index == outputQueue.InputSize)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

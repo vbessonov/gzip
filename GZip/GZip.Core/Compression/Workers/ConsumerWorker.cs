@@ -14,7 +14,6 @@ namespace VBessonov.GZip.Core.Compression.Workers
         {
             OutputQueue outputQueue = parameter.Parameter;
             Stream outputFileStream = null;
-
             int index = 0;
 
             while (true)
