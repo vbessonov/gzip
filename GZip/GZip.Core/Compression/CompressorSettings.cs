@@ -8,6 +8,8 @@ namespace VBessonov.GZip.Core.Compression
 
         private ICompressorReader _reader = new CompressorReader();
 
+        private bool _createMultiStreamHeader = false;
+
         public int WorkersCount
         {
             get { return _workersCount; }
@@ -34,6 +36,12 @@ namespace VBessonov.GZip.Core.Compression
 
                 _reader = value;
             }
+        }
+
+        public bool CreateMultiStreamHeader
+        {
+            get { return _createMultiStreamHeader; }
+            set { _createMultiStreamHeader = value; }
         }
     }
 }

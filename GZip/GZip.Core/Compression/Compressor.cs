@@ -63,27 +63,57 @@ namespace VBessonov.GZip.Core.Compression
             return compressionWorkers;
         }
 
-        public void Compress(string inputFile, string outputFile)
+        private void CompressSequentially(IEnumerable<CompressionWorker> compressionWorkers, string outputFile, OutputQueue outputQueue)
         {
-            IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFile);
-            InputQueue inputQueue = new InputQueue();
-            OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
-            IEnumerable<CompressionWorker> compressionWorkers = CreateCompressionWorkers();
-            int index = 0;
-
-            foreach (InputStream inputStream in inputStreams)
-            {
-                inputQueue.Add(new CompressionInputWorkItem(inputStream, new OutputStream(index++, new MemoryStream()), outputQueue));
-            }
-
             foreach (CompressionWorker compressionWorker in compressionWorkers)
             {
-                compressionWorker.Work(new WorkerParameter<InputQueue> { Parameter = inputQueue });
+                compressionWorker.Thread.Join();
             }
 
+            GZipMultiStreamHeader multiStreamHeader = new GZipMultiStreamHeader();
+
+            for (int i = 0; i < outputQueue.Count; i++)
+            {
+                CompressionOutputWorkItem workItem = outputQueue[i];
+                GZipMultiStreamHeaderItem multiStreamHeaderItem = new GZipMultiStreamHeaderItem
+                {
+                    Length = (ushort)workItem.OutputStream.Stream.Length
+                };
+            }
+
+            CompressionOutputWorkItem firstOutputWorkItem = outputQueue[0];
+            IGZipBlockReader blockReader = new GZipBlockReader();
+
+            firstOutputWorkItem.OutputStream.Stream.Position = 0;
+
+            GZipBlock block= blockReader.Read(firstOutputWorkItem.OutputStream.Stream, GZipBlockFlags.All);
+            block.ExtraField = multiStreamHeader.Serialize();
+            block.Flags |= GZipFlags.FEXTRA;
+
+            IGZipBlockWriter blockWriter = new GZipBlockWriter();
+
+            using (FileStream outputFileStream = File.Create(outputFile))
+            {
+                blockWriter.Write(outputFileStream, block, GZipBlockFlags.All);
+
+                for (int i = 1; i < outputQueue.Count; i++)
+                {
+                    CompressionOutputWorkItem workItem = outputQueue[i];
+
+                    using (Stream compressedStream = workItem.OutputStream.Stream)
+                    {
+                        compressedStream.Position = 0;
+                        compressedStream.CopyTo(outputFileStream);
+                    }
+                }
+            }
+        }
+
+        private void CompressSimultaneously(string outputFile, OutputQueue outputQueue)
+        {
             using (Stream outputFileStream = File.Create(outputFile))
             {
-                index = 0;
+                int index = 0;
 
                 while (true)
                 {
@@ -111,6 +141,34 @@ namespace VBessonov.GZip.Core.Compression
                         }
                     }
                 }
+            }
+        }
+
+        public void Compress(string inputFile, string outputFile)
+        {
+            IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFile);
+            InputQueue inputQueue = new InputQueue();
+            OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
+            IEnumerable<CompressionWorker> compressionWorkers = CreateCompressionWorkers();
+            int index = 0;
+
+            foreach (InputStream inputStream in inputStreams)
+            {
+                inputQueue.Add(new CompressionInputWorkItem(inputStream, new OutputStream(index++, new MemoryStream()), outputQueue));
+            }
+
+            foreach (CompressionWorker compressionWorker in compressionWorkers)
+            {
+                compressionWorker.Work(new WorkerParameter<InputQueue> { Parameter = inputQueue });
+            }
+
+            if (_settings.CreateMultiStreamHeader && _settings.Reader.Settings.StreamsCount > 1)
+            {
+                CompressSequentially(compressionWorkers, outputFile, outputQueue);
+            }
+            else
+            {
+                CompressSimultaneously(outputFile, outputQueue);
             }
         }
     }

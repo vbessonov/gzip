@@ -57,14 +57,18 @@ namespace VBessonov.GZip.CUI
             int resultCode = 1;
             ICompressor compressor = new Compressor();
 
+            compressor.Settings.CreateMultiStreamHeader = options.CreateMultiStreamHeader;
+
             if (options.WorkersCount.HasValue)
             {
                 compressor.Settings.WorkersCount = options.WorkersCount.Value;
             }
+
             if (options.StreamsCount.HasValue)
             {
                 compressor.Settings.Reader.Settings.StreamsCount = options.StreamsCount.Value;
             }
+
             if (options.ChunkSize.HasValue)
             {
                 compressor.Settings.Reader.Settings.ChunkSize = options.ChunkSize.Value;

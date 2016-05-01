@@ -6,7 +6,7 @@ namespace VBessonov.GZip.Core.Compression.Workers
     {
         private Thread _thread;
 
-        protected Thread Thread
+        public Thread Thread
         {
             get { return _thread; }
         }

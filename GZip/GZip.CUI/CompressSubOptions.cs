@@ -11,5 +11,8 @@ namespace Vbessonov.GZip.CUI
 
         [Option("workers-count", Required = false, HelpText = "Number of threads using for compression.")]
         public int? WorkersCount { get; set; }
+
+        [Option("multistream", Required = false, DefaultValue = false, HelpText = "Create multi-stream gzip compression.")]
+        public bool CreateMultiStreamHeader { get; set; }
     }
 }
