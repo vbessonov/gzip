@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using VBessonov.GZip.Core.Compression.Streams;
@@ -48,6 +49,38 @@ namespace VBessonov.GZip.Core.Compression
             CompressionWorker compressionWorker = new CompressionWorker();
 
             return compressionWorker;
+        }
+
+        private InputQueue CreateInputQueue(FileInfo inputFile, IEnumerable<InputStream> inputStreams, OutputQueue outputQueue)
+        {
+            long usedProcessMemory = 0;
+
+            using (Process process = Process.GetCurrentProcess())
+            {
+                usedProcessMemory = process.PrivateMemorySize64;
+            }
+
+            long availableMemorySize = _settings.AvailableMemorySize;
+            long usedCompressionMemorySize = _settings.Reader.Settings.StreamsCount * _settings.Reader.Settings.ChunkSize;
+            long usedMemorySize = usedProcessMemory + usedCompressionMemorySize;
+            long freeMemorySize = availableMemorySize - usedMemorySize;
+            long requiredMemorySize = inputFile.Length / _settings.Reader.Settings.StreamsCount;
+            long availableMemoryStreamsCount = freeMemorySize / requiredMemorySize;
+            InputQueue inputQueue = new InputQueue();
+            int index = 0;
+
+            foreach (InputStream inputStream in inputStreams)
+            {
+                Stream rawOutputStream =
+                    index < availableMemoryStreamsCount
+                    ? (Stream)(new MemoryStream())
+                    : (Stream)(new TempFileStream());
+                OutputStream outputStream = new OutputStream(index++, rawOutputStream);
+                CompressionInputWorkItem workItem = new CompressionInputWorkItem(inputStream, outputStream, outputQueue);
+                inputQueue.Add(workItem);
+            }
+
+            return inputQueue;
         }
 
         private IEnumerable<CompressionWorker> CreateCompressionWorkers()
@@ -146,16 +179,26 @@ namespace VBessonov.GZip.Core.Compression
 
         public void Compress(string inputFile, string outputFile)
         {
-            IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFile);
-            InputQueue inputQueue = new InputQueue();
-            OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
-            IEnumerable<CompressionWorker> compressionWorkers = CreateCompressionWorkers();
-            int index = 0;
-
-            foreach (InputStream inputStream in inputStreams)
+            if (string.IsNullOrEmpty(inputFile))
             {
-                inputQueue.Add(new CompressionInputWorkItem(inputStream, new OutputStream(index++, new MemoryStream()), outputQueue));
+                throw new ArgumentException("Input file must be non-empty string");
             }
+            if (string.IsNullOrEmpty(outputFile))
+            {
+                throw new ArgumentException("Output file must be non-empty string");
+            }
+
+            FileInfo inputFileInfo = new FileInfo(inputFile);
+
+            if (!inputFileInfo.Exists)
+            {
+                throw new ArgumentException("Input file does not exist");
+            }
+
+            IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFile);
+            OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
+            InputQueue inputQueue = CreateInputQueue(inputFileInfo, inputStreams, outputQueue);
+            IEnumerable<CompressionWorker> compressionWorkers = CreateCompressionWorkers();
 
             foreach (CompressionWorker compressionWorker in compressionWorkers)
             {

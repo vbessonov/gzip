@@ -1,4 +1,5 @@
 ﻿using System;
+using VBessonov.GZip.Core.WinApi;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -9,6 +10,8 @@ namespace VBessonov.GZip.Core.Compression
         private ICompressorReader _reader = new CompressorReader();
 
         private bool _createMultiStreamHeader = false;
+
+        private long _availableMemorySize = 1024L * 1024L * 1024L * 2;  // 2Gb
 
         public int WorkersCount
         {
@@ -42,6 +45,20 @@ namespace VBessonov.GZip.Core.Compression
         {
             get { return _createMultiStreamHeader; }
             set { _createMultiStreamHeader = value; }
+        }
+
+        public long AvailableMemorySize
+        {
+            get { return _availableMemorySize; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("Available memory size must be non-negative integer");
+                }
+
+                _availableMemorySize = value;
+            }
         }
     }
 }

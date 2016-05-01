@@ -64,6 +64,11 @@ namespace VBessonov.GZip.CUI
                 compressor.Settings.WorkersCount = options.WorkersCount.Value;
             }
 
+            if (options.AvailableMemorySize.HasValue)
+            {
+                compressor.Settings.AvailableMemorySize = options.AvailableMemorySize.Value;
+            }
+
             if (options.StreamsCount.HasValue)
             {
                 compressor.Settings.Reader.Settings.StreamsCount = options.StreamsCount.Value;

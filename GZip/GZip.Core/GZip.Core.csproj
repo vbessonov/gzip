@@ -71,6 +71,7 @@
     <Compile Include="Compression\Streams\OutputStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Compression\Streams\StreamChunk.cs" />
+    <Compile Include="WinApi\MemoryStatus.cs" />
     <Compile Include="WinApi\SystemInfo.cs" />
     <Compile Include="Compression\Streams\TempFileStream.cs" />
     <Compile Include="WinApi\ProcessorArchitecture.cs" />
