@@ -96,12 +96,11 @@ namespace VBessonov.GZip.CUI
 
         public static int Main(string[] args)
         {
-            int resultCode = 0;
             Options options = new Options();
             string invokedVerb;
             CommonSubOptions invokedSubOptions;
 
-            resultCode = ParseCommandLine(options, args, out invokedVerb, out invokedSubOptions);
+            int resultCode = ParseCommandLine(options, args, out invokedVerb, out invokedSubOptions);
 
             if (resultCode == 0)
             {
