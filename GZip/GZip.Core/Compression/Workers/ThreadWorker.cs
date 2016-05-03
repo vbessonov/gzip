@@ -2,7 +2,7 @@
 
 namespace VBessonov.GZip.Core.Compression.Workers
 {
-    internal abstract class ThreadWorker<T> : IWorker<T>
+    public abstract class ThreadWorker<T> : IWorker<T>
     {
         private Thread _thread;
 

@@ -57,23 +57,20 @@ namespace VBessonov.GZip.CUI
             int resultCode = 1;
             ICompressor compressor = new Compressor();
 
-            compressor.Settings.CreateMultiStreamHeader = options.CreateMultiStreamHeader;
+            compressor.Settings.CreateMultiStream = options.CreateMultiStreamHeader;
 
             if (options.WorkersCount.HasValue)
             {
-                compressor.Settings.WorkersCount = options.WorkersCount.Value;
+                compressor.Settings.WorkerPool.MaxCount = options.WorkersCount.Value;
             }
-
             if (options.AvailableMemorySize.HasValue)
             {
                 compressor.Settings.AvailableMemorySize = options.AvailableMemorySize.Value;
             }
-
             if (options.StreamsCount.HasValue)
             {
-                compressor.Settings.Reader.Settings.StreamsCount = options.StreamsCount.Value;
+                ((CompressorReaderSettings)compressor.Settings.Reader.Settings).StreamsCount = options.StreamsCount.Value;
             }
-
             if (options.ChunkSize.HasValue)
             {
                 compressor.Settings.Reader.Settings.ChunkSize = options.ChunkSize.Value;
@@ -96,7 +93,43 @@ namespace VBessonov.GZip.CUI
 
         private static int Decompress(DecompressSubOptions options)
         {
-            throw new NotImplementedException();
+            int resultCode = 1;
+            IDecompressor decompressor = new Decompressor();
+
+            if (options.WorkersCount.HasValue)
+            {
+                decompressor.Settings.WorkerPool.MaxCount = options.WorkersCount.Value;
+            }
+            if (options.AvailableMemorySize.HasValue)
+            {
+                decompressor.Settings.AvailableMemorySize = options.AvailableMemorySize.Value;
+            }
+            if (options.ChunkSize.HasValue)
+            {
+                decompressor.Settings.Reader.Settings.ChunkSize = options.ChunkSize.Value;
+            }
+            if (options.DecompressionFactor.HasValue)
+            {
+                decompressor.Settings.DecompressionFactor = options.DecompressionFactor.Value;
+            }
+            if (options.MemoryLoadThreshold.HasValue)
+            {
+                decompressor.Settings.MemoryLoadThreshold = options.MemoryLoadThreshold.Value;
+            }
+
+            try
+            {
+                decompressor.Decompress(options.InputFile, options.OutputFile);
+                resultCode = 0;
+
+                Console.WriteLine("The file has been successfully decompressed.");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("An unexpected error has occured: {0}", exception.Message);
+            }
+
+            return resultCode;
         }
 
         public static int Main(string[] args)

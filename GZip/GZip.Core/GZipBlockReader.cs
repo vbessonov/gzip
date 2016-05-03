@@ -36,7 +36,11 @@ namespace VBessonov.GZip.Core
                 block.CompressionMethod = buffer[2];
             }
 
-            if (flags.HasFlag(GZipBlockFlags.Flags | GZipBlockFlags.ExtraField | GZipBlockFlags.OriginalFileName | GZipBlockFlags.Comment | GZipBlockFlags.CRC16))
+            if (flags.HasFlag(GZipBlockFlags.Flags) ||
+                flags.HasFlag(GZipBlockFlags.ExtraField) ||
+                flags.HasFlag(GZipBlockFlags.OriginalFileName) ||
+                flags.HasFlag(GZipBlockFlags.Comment) ||
+                flags.HasFlag(GZipBlockFlags.CRC16))
             {
                 block.Flags = (GZipFlags)buffer[3];
             }

@@ -4,15 +4,13 @@ namespace VBessonov.GZip.Core
 {
     public class GZipMultiStreamHeaderItem : ISerializable
     {
-        public ulong Offset { get; set; }
-
-        public ushort Length { get; set; }
+        public long Length { get; set; }
 
         public static ushort Size
         {
             get
             {
-                return sizeof(ulong) + sizeof(ushort);
+                return sizeof(long);
             }
         }
 
@@ -26,26 +24,17 @@ namespace VBessonov.GZip.Core
 
             GZipMultiStreamHeaderItem anotherItem = (GZipMultiStreamHeaderItem)obj;
 
-            return
-                Offset == anotherItem.Offset &&
-                Length == anotherItem.Length;
+            return Length == anotherItem.Length;
         }
 
         public override int GetHashCode()
         {
-            return (int)(Offset ^ Length);
+            return (int)(Length);
         }
 
         public byte[] Serialize()
         {
-            byte[] offsetBytes = BitConverter.GetBytes(Offset);
-            byte[] lengthBytes = BitConverter.GetBytes(Length);
-            byte[] buffer = new byte[offsetBytes.Length + lengthBytes.Length];
-
-            offsetBytes.CopyTo(buffer, 0);
-            lengthBytes.CopyTo(buffer, offsetBytes.Length);
-
-            return buffer;
+            return BitConverter.GetBytes(Length);
         }
 
         public void Deserialize(byte[] data)
@@ -59,8 +48,7 @@ namespace VBessonov.GZip.Core
                 throw new ArgumentException("Incorrect data's size");
             }
 
-            Offset = BitConverter.ToUInt64(data, 0);
-            Length = BitConverter.ToUInt16(data, sizeof(ulong));
+            Length = BitConverter.ToInt64(data, 0);
         }
     }
 }

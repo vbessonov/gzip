@@ -6,22 +6,22 @@ using VBessonov.GZip.Core.Compression.Streams;
 
 namespace VBessonov.GZip.Core.Compression
 {
-    public class Compressor : ICompressor
+    public class Decompressor : IDecompressor
     {
-        private readonly CompressorSettings _settings;
+        private readonly DecompressorSettings _settings;
 
-        public CompressorSettings Settings
+        public DecompressorSettings Settings
         {
             get { return _settings; }
         }
 
-        public Compressor()
+        public Decompressor()
             : this(CreateDefaultSettings())
         {
 
         }
 
-        public Compressor(CompressorSettings settings)
+        public Decompressor(DecompressorSettings settings)
         {
             if (settings == null)
             {
@@ -31,16 +31,16 @@ namespace VBessonov.GZip.Core.Compression
             _settings = settings;
         }
 
-        private static CompressorSettings CreateDefaultSettings()
+        private static DecompressorSettings CreateDefaultSettings()
         {
-            return new CompressorSettings();
+            return new DecompressorSettings();
         }
 
-        public void Compress(string inputFilePath, string outputFilePath)
+        public void Decompress(string inputFilePath, string outputFilePath)
         {
             if (string.IsNullOrEmpty(inputFilePath))
             {
-                throw new ArgumentException("Input file must be non-empty string");
+                throw new ArgumentException("Input file path must be non-empty string");
             }
             if (!File.Exists(inputFilePath))
             {
@@ -48,7 +48,7 @@ namespace VBessonov.GZip.Core.Compression
             }
             if (string.IsNullOrEmpty(outputFilePath))
             {
-                throw new ArgumentException("Output file must be non-empty string");
+                throw new ArgumentException("Output file path must be non-empty string");
             }
 
             IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFilePath);
@@ -57,19 +57,7 @@ namespace VBessonov.GZip.Core.Compression
 
             _settings.WorkerPool.Work(inputQueue);
 
-            if (_settings.CreateMultiStream && inputStreams.Count() > 1)
-            {
-                foreach (ProcessorWorker compressionWorker in _settings.WorkerPool)
-                {
-                    compressionWorker.Thread.Join();
-                }
-
-                _settings.MultiStreamWriter.Write(outputFilePath, outputQueue);
-            }
-            else
-            {
-                _settings.Writer.Write(outputFilePath, outputQueue);
-            }
+            _settings.Writer.Write(outputFilePath, outputQueue);
         }
     }
 }

@@ -1,64 +1,53 @@
 ﻿using System;
+using VBessonov.GZip.Core.Compression.Workers;
 using VBessonov.GZip.Core.WinApi;
 
 namespace VBessonov.GZip.Core.Compression
 {
-    public class CompressorSettings
+    public class CompressorSettings : CompressionSettings
     {
-        private int _workersCount = 1;
+        private bool _createMultiStream = false;
 
-        private ICompressorReader _reader = new CompressorReader();
+        private IWriter _multiStreamWriter = new MultiStreamWriter();
 
-        private bool _createMultiStreamHeader = false;
-
-        private long _availableMemorySize = 1024L * 1024L * 1024L * 2;  // 2Gb
-
-        public int WorkersCount
+        public bool CreateMultiStream
         {
-            get { return _workersCount; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("Workers count must be non-negative integer");
-                }
-
-                _workersCount = value;
-            }
+            get { return _createMultiStream; }
+            set { _createMultiStream = value; }
         }
 
-        public ICompressorReader Reader
+        public IWriter MultiStreamWriter
         {
-            get { return _reader; }
+            get { return _multiStreamWriter; }
             set
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("Compressor reader must be non-empty");
+                    throw new ArgumentNullException("Multistream writer must be non-empty");
                 }
 
-                _reader = value;
+                _multiStreamWriter = value;
             }
         }
 
-        public bool CreateMultiStreamHeader
+        protected override IInputQueueFactory CreateDefaultInputQueueFactory()
         {
-            get { return _createMultiStreamHeader; }
-            set { _createMultiStreamHeader = value; }
+            return new InputQueueFactory(this);
         }
 
-        public long AvailableMemorySize
+        protected override IReader CreateDefaultReader()
         {
-            get { return _availableMemorySize; }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("Available memory size must be non-negative integer");
-                }
+            return new CompressorReader();
+        }
 
-                _availableMemorySize = value;
-            }
+        protected override IProcessorFactory CreateProcessorFactory()
+        {
+            return new CompressorWorkerFactory();
+        }
+
+        protected override IWriter CreateDefaultWriter()
+        {
+            return new Writer();
         }
     }
 }

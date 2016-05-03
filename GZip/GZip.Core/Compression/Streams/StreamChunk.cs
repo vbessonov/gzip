@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal class StreamChunk : AbstractStreamChunk
+    public class StreamChunk : AbstractStreamChunk
     {
         private readonly Stream _stream;
 
@@ -31,6 +31,11 @@ namespace VBessonov.GZip.Core.Compression.Streams
             }
 
             _stream = stream;
+        }
+
+        public override void Dispose()
+        {
+            _stream.Dispose();
         }
     }
 }

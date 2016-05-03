@@ -1,15 +1,17 @@
 ﻿using System;
 using VBessonov.GZip.Core.Compression.Streams;
 
-namespace VBessonov.GZip.Core.Compression.Workers
+namespace VBessonov.GZip.Core.Compression
 {
-    internal class CompressionInputWorkItem
+    public class InputWorkItem
     {
         private readonly InputStream _inputStream;
 
         private readonly OutputStream _outputStream;
 
         private readonly OutputQueue _outputQueue;
+
+        private readonly CompressionSettings _settings;
 
         public InputStream InputStream
         {
@@ -26,7 +28,12 @@ namespace VBessonov.GZip.Core.Compression.Workers
             get { return _outputQueue; }
         }
 
-        public CompressionInputWorkItem(InputStream inputStream, OutputStream outputStream, OutputQueue outputQueue)
+        public CompressionSettings Settings
+        {
+            get { return _settings; }
+        }
+
+        public InputWorkItem(InputStream inputStream, OutputStream outputStream, OutputQueue outputQueue, CompressionSettings settings)
         {
             if (inputStream == null)
             {
@@ -40,10 +47,15 @@ namespace VBessonov.GZip.Core.Compression.Workers
             {
                 throw new ArgumentNullException("Output queue must be non-empty");
             }
+            if (settings == null)
+            {
+                throw new ArgumentNullException("Settings must be non-empty");
+            }
 
             _inputStream = inputStream;
             _outputStream = outputStream;
             _outputQueue = outputQueue;
+            _settings = settings;
         }
     }
 }

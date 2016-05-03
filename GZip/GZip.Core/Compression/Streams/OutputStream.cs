@@ -7,7 +7,7 @@ namespace VBessonov.GZip.Core.Compression.Streams
     {
         private readonly int _index;
 
-        private readonly Stream _stream;
+        private Stream _stream;
 
         public int Index
         {
@@ -17,6 +17,15 @@ namespace VBessonov.GZip.Core.Compression.Streams
         public Stream Stream
         {
             get { return _stream; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("Stream must be non-empty");
+                }
+
+                _stream = value;
+            }
         }
 
         public OutputStream(int index, Stream stream)

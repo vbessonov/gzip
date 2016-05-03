@@ -1,9 +1,9 @@
 ﻿using System;
 using VBessonov.GZip.Core.Compression.Streams;
 
-namespace VBessonov.GZip.Core.Compression.Workers
+namespace VBessonov.GZip.Core.Compression
 {
-    internal class CompressionOutputWorkItem
+    public class OutputWorkItem
     {
         private readonly OutputStream _outputStream;
 
@@ -12,7 +12,7 @@ namespace VBessonov.GZip.Core.Compression.Workers
             get { return _outputStream; }
         }
 
-        public CompressionOutputWorkItem(OutputStream outputStream)
+        public OutputWorkItem(OutputStream outputStream)
         {
             if (outputStream == null)
             {

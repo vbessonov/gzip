@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace VBessonov.GZip.Core.Compression.Streams
 {
-    public interface IStreamChunk
+    public interface IStreamChunk : IDisposable
     {
         int Index { get; }
 

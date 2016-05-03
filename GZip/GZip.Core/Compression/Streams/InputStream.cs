@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace VBessonov.GZip.Core.Compression.Streams
 {
-    public class InputStream
+    public class InputStream : IDisposable
     {
         private readonly int _index;
 
@@ -19,6 +20,11 @@ namespace VBessonov.GZip.Core.Compression.Streams
             get { return _chunks; }
         }
 
+        public Stream Stream
+        {
+            get { return new ChunkedStream(this); }
+        }
+
         public InputStream(int index)
         {
             if (index < 0)
@@ -27,6 +33,14 @@ namespace VBessonov.GZip.Core.Compression.Streams
             }
 
             _index = index;
+        }
+
+        public void Dispose()
+        {
+            foreach (IStreamChunk chunk in _chunks)
+            {
+                chunk.Dispose();
+            }
         }
     }
 }

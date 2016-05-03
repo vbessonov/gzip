@@ -7,11 +7,11 @@ using VBessonov.GZip.Core.WinApi;
 
 namespace VBessonov.GZip.Core.Compression
 {
-    public class CompressorReader : ICompressorReader
+    public class CompressorReader : IReader
     {
         private readonly CompressorReaderSettings _settings;
 
-        public CompressorReaderSettings Settings
+        public ReaderSettings Settings
         {
             get { return _settings; }
         }

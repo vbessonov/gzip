@@ -9,7 +9,7 @@ namespace Vbessonov.GZip.CUI
         public CompressSubOptions CompressVerb { get; set; }
 
         [VerbOption(DecompressSubOptions.VerbName, HelpText = "Decompress the file.")]
-        public CompressSubOptions DecompressVerb { get; set; }
+        public DecompressSubOptions DecompressVerb { get; set; }
 
         [HelpOption]
         public string GetUsage()

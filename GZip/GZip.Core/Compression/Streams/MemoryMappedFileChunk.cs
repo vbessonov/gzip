@@ -4,7 +4,7 @@ using System.IO.MemoryMappedFiles;
 
 namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal class MemoryMappedFileChunk : AbstractStreamChunk
+    public class MemoryMappedFileChunk : AbstractStreamChunk
     {
         private readonly MemoryMappedFile _file;
 
@@ -51,6 +51,14 @@ namespace VBessonov.GZip.Core.Compression.Streams
             _file = file;
             _offset = offset;
             _length = length;
+        }
+
+        public override void Dispose()
+        {
+            if (_stream != null)
+            {
+                _stream.Dispose();
+            }
         }
     }
 }

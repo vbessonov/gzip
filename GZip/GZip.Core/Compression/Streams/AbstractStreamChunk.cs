@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VBessonov.GZip.Core.Compression.Streams
 {
-    internal abstract class AbstractStreamChunk : IStreamChunk
+    public abstract class AbstractStreamChunk : IStreamChunk
     {
         private readonly int _index;
 
@@ -25,5 +25,7 @@ namespace VBessonov.GZip.Core.Compression.Streams
 
             _index = index;
         }
+
+        public abstract void Dispose();
     }
 }
