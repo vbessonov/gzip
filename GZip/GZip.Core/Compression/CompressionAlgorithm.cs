@@ -42,7 +42,7 @@ namespace VBessonov.GZip.Core.Compression
                 throw new ArgumentException("Output file must be non-empty string");
             }
 
-            SynchronizationContext2 syncContext = new SynchronizationContext2();
+            QueuedSynchronizationContext syncContext = new QueuedSynchronizationContext();
             AsyncOperationManager.SynchronizationContext = syncContext;
 
             IEnumerable<InputStream> inputStreams = GetSettings().Reader.Read(inputFilePath);
