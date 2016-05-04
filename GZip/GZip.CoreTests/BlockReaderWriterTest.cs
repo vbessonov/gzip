@@ -5,14 +5,14 @@ using VBessonov.GZip.Core;
 namespace VBessonov.GZip.CoreTests
 {
     [TestClass]
-    public class GZipBlockReaderWriterTest
+    public class BlockReaderWriterTest
     {
         [TestMethod]
         public void TestWrite()
         {
-            IGZipBlockWriter blockWriter = new GZipBlockWriter();
+            IGZipBlockWriter blockWriter = new BlockWriter();
             Stream compressedStream = TestUtils.Compress(10);
-            GZipBlock block = new GZipBlock
+            Block block = new Block
             {
                 ExtraField = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 },
                 OriginalFileName = "test.txt",
@@ -23,11 +23,11 @@ namespace VBessonov.GZip.CoreTests
             blockWriter.Write(
                 compressedStream,
                 block,
-                GZipBlockFlags.ExtraField | GZipBlockFlags.OriginalFileName | GZipBlockFlags.Comment | GZipBlockFlags.Flags
+                BlockFlags.ExtraField | BlockFlags.OriginalFileName | BlockFlags.Comment | BlockFlags.Flags
             );
 
-            IGZipBlockReader blockReader = new GZipBlockReader();
-            GZipBlock newBlock = blockReader.Read(compressedStream, GZipBlockFlags.All);
+            IBlockReader blockReader = new BlockReader();
+            Block newBlock = blockReader.Read(compressedStream, BlockFlags.All);
 
             Assert.AreEqual(block.Flags, newBlock.Flags);
             CollectionAssert.AreEqual(block.ExtraField, newBlock.ExtraField);

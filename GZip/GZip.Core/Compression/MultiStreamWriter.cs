@@ -26,7 +26,7 @@ namespace VBessonov.GZip.Core.Compression
             for (int i = 0; i < outputQueue.Count; i++)
             {
                 OutputWorkItem workItem = outputQueue[i];
-                GZipMultiStreamHeaderItem multiStreamHeaderItem = new GZipMultiStreamHeaderItem
+                MultiStreamHeaderItem multiStreamHeaderItem = new MultiStreamHeaderItem
                 {
                     Length = workItem.OutputStream.Stream.Length
                 };
@@ -35,22 +35,22 @@ namespace VBessonov.GZip.Core.Compression
             }
 
             OutputWorkItem firstOutputWorkItem = outputQueue[0];
-            IGZipBlockReader blockReader = new GZipBlockReader();
+            IBlockReader blockReader = new BlockReader();
 
             firstOutputWorkItem.OutputStream.Stream.Position = 0;
 
-            GZipBlock block = blockReader.Read(firstOutputWorkItem.OutputStream.Stream, GZipBlockFlags.All);
+            Block block = blockReader.Read(firstOutputWorkItem.OutputStream.Stream, BlockFlags.All);
 
             block.ExtraField = multiStreamHeader.Serialize();
             multiStreamHeader.Items[0].Length = block.Length;
             block.ExtraField = multiStreamHeader.Serialize();
             block.Flags |= GZipFlags.FEXTRA;
 
-            IGZipBlockWriter blockWriter = new GZipBlockWriter();
+            IGZipBlockWriter blockWriter = new BlockWriter();
 
             using (FileStream outputFileStream = File.Create(outputFilePath))
             {
-                blockWriter.Write(outputFileStream, block, GZipBlockFlags.All);
+                blockWriter.Write(outputFileStream, block, BlockFlags.All);
 
                 for (int i = 1; i < outputQueue.Count; i++)
                 {

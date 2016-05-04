@@ -5,13 +5,13 @@ using VBessonov.GZip.Core;
 namespace VBessonov.GZip.CoreTests
 {
     [TestClass]
-    public class GZipMultiStreamHeaderItemTest
+    public class MultiStreamHeaderItemTest
     {
         [TestMethod]
         public void TestSerialize()
         {
             long length = long.MaxValue;
-            GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem
+            MultiStreamHeaderItem item = new MultiStreamHeaderItem
             {
                 Length = length
             };
@@ -24,7 +24,7 @@ namespace VBessonov.GZip.CoreTests
         public void TestDeserialize()
         {
             long length = long.MaxValue;
-            GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem();
+            MultiStreamHeaderItem item = new MultiStreamHeaderItem();
             byte[] buffer = BitConverter.GetBytes(length);
 
             item.Deserialize(buffer);
@@ -36,12 +36,12 @@ namespace VBessonov.GZip.CoreTests
         public void TestCanDeserializeSerializedItem()
         {
             long length = long.MaxValue;
-            GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem
+            MultiStreamHeaderItem item = new MultiStreamHeaderItem
             {
                 Length = length
             };
             byte[] buffer = item.Serialize();
-            GZipMultiStreamHeaderItem newItem = new GZipMultiStreamHeaderItem();
+            MultiStreamHeaderItem newItem = new MultiStreamHeaderItem();
 
             newItem.Deserialize(buffer);
 

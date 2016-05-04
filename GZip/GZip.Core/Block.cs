@@ -2,7 +2,7 @@
 
 namespace VBessonov.GZip.Core
 {
-    public class GZipBlock
+    public class Block
     {
         public byte ID1 { get; set; }
 

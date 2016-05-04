@@ -2,7 +2,7 @@
 
 namespace VBessonov.GZip.Core
 {
-    public class GZipMultiStreamHeaderItem : ISerializable
+    public class MultiStreamHeaderItem : ISerializable
     {
         public long Length { get; set; }
 
@@ -22,7 +22,7 @@ namespace VBessonov.GZip.Core
                 return false;
             }
 
-            GZipMultiStreamHeaderItem anotherItem = (GZipMultiStreamHeaderItem)obj;
+            MultiStreamHeaderItem anotherItem = (MultiStreamHeaderItem)obj;
 
             return Length == anotherItem.Length;
         }

@@ -3,7 +3,7 @@
 namespace VBessonov.GZip.Core
 {
     [Flags]
-    public enum GZipBlockFlags
+    public enum BlockFlags
     {
         None = 0x0,
         ID1 = 0x1,

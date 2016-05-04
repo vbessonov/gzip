@@ -4,6 +4,6 @@ namespace VBessonov.GZip.Core
 {
     public interface IGZipBlockWriter
     {
-        void Write(Stream stream, GZipBlock block, GZipBlockFlags flags);
+        void Write(Stream stream, Block block, BlockFlags flags);
     }
 }

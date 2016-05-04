@@ -76,8 +76,8 @@ namespace VBessonov.GZip.Core.Compression
             List<InputStream> inputStreams = new List<InputStream>();
             MemoryMappedFile memoryMappedFile = MemoryMappedFile.CreateFromFile(inputFile);
             MemoryMappedViewStream stream = memoryMappedFile.CreateViewStream(0, 1024);
-            IGZipBlockReader blockReader = new GZipBlockReader();
-            GZipBlock block = blockReader.Read(stream, GZipBlockFlags.ExtraField);
+            IBlockReader blockReader = new BlockReader();
+            Block block = blockReader.Read(stream, BlockFlags.ExtraField);
 
             if (block.ExtraField != null &&
                 block.ExtraField.Length > 0)
@@ -89,7 +89,7 @@ namespace VBessonov.GZip.Core.Compression
                 int streamIndex = 0;
                 long offset = 0;
 
-                foreach (GZipMultiStreamHeaderItem multiStreamHeaderItem in multiStreamHeader.Items)
+                foreach (MultiStreamHeaderItem multiStreamHeaderItem in multiStreamHeader.Items)
                 {
                     InputStream inputStream = ReadStream(streamIndex++, memoryMappedFile, offset, multiStreamHeaderItem.Length);
 

@@ -2,21 +2,21 @@
 
 namespace VBessonov.GZip.Core
 {
-    public class GZipBlockException : Exception
+    public class BlockException : Exception
     {
-        public GZipBlockException()
+        public BlockException()
             : base()
         {
 
         }
 
-        public GZipBlockException(string message)
+        public BlockException(string message)
             : base(message)
         {
 
         }
 
-        public GZipBlockException(string message, Exception innerException)
+        public BlockException(string message, Exception innerException)
             : base(message, innerException)
         {
 

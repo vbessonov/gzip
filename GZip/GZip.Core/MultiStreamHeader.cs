@@ -5,26 +5,26 @@ namespace VBessonov.GZip.Core
 {
     public class GZipMultiStreamHeader : ISerializable
     {
-        public IList<GZipMultiStreamHeaderItem> Items { get; private set; }
+        public IList<MultiStreamHeaderItem> Items { get; private set; }
 
         public GZipMultiStreamHeader()
         {
-            Items = new List<GZipMultiStreamHeaderItem>();
+            Items = new List<MultiStreamHeaderItem>();
         }
 
         public byte[] Serialize()
         {
-            byte[] buffer = new byte[Items.Count * GZipMultiStreamHeaderItem.Size];
+            byte[] buffer = new byte[Items.Count * MultiStreamHeaderItem.Size];
             int index = 0;
 
-            foreach (GZipMultiStreamHeaderItem item in Items)
+            foreach (MultiStreamHeaderItem item in Items)
             {
                 byte[] itemBuffer = item.Serialize();
 
                 // TODO: Get rid of copying
                 itemBuffer.CopyTo(buffer, index);
 
-                index += GZipMultiStreamHeaderItem.Size;
+                index += MultiStreamHeaderItem.Size;
             }
 
             return buffer;
@@ -36,20 +36,20 @@ namespace VBessonov.GZip.Core
             {
                 throw new ArgumentNullException("Data must be non-empty");
             }
-            if ((data.Length % GZipMultiStreamHeaderItem.Size) != 0)
+            if ((data.Length % MultiStreamHeaderItem.Size) != 0)
             {
                 throw new ArgumentException("Data must be aligned with GZipMultiStreamHeaderItem.Size");
             }
 
-            int count = data.Length / GZipMultiStreamHeaderItem.Size;
+            int count = data.Length / MultiStreamHeaderItem.Size;
 
             for (int i = 0; i < count; i++)
             {
-                GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem();
-                byte[] buffer = new byte[GZipMultiStreamHeaderItem.Size];
+                MultiStreamHeaderItem item = new MultiStreamHeaderItem();
+                byte[] buffer = new byte[MultiStreamHeaderItem.Size];
 
                 // TODO: Get rid of copying
-                Array.Copy(data, i * GZipMultiStreamHeaderItem.Size, buffer, 0, GZipMultiStreamHeaderItem.Size);
+                Array.Copy(data, i * MultiStreamHeaderItem.Size, buffer, 0, MultiStreamHeaderItem.Size);
 
                 item.Deserialize(buffer);
 

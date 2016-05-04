@@ -5,7 +5,7 @@ using VBessonov.GZip.Core.Extensions;
 
 namespace VBessonov.GZip.Core
 {
-    public class GZipBlockWriter : IGZipBlockWriter
+    public class BlockWriter : IGZipBlockWriter
     {
         private void InsertIntoStream(Stream stream, byte[] data)
         {
@@ -23,7 +23,7 @@ namespace VBessonov.GZip.Core
             stream.Position = savedPosition + data.Length;
         }
 
-        public void Write(Stream stream, GZipBlock block, GZipBlockFlags flags)
+        public void Write(Stream stream, Block block, BlockFlags flags)
         {
             if (stream == null)
             {
@@ -36,7 +36,7 @@ namespace VBessonov.GZip.Core
 
             stream.Position = 0;
 
-            if (flags.HasFlag(GZipBlockFlags.ID1))
+            if (flags.HasFlag(BlockFlags.ID1))
             {
                 stream.WriteByte(block.ID1);
             }
@@ -45,7 +45,7 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.ID2))
+            if (flags.HasFlag(BlockFlags.ID2))
             {
                 stream.WriteByte(block.ID2);
             }
@@ -54,7 +54,7 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.CompressionMethod))
+            if (flags.HasFlag(BlockFlags.CompressionMethod))
             {
                 stream.WriteByte(block.CompressionMethod);
             }
@@ -63,7 +63,7 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.Flags))
+            if (flags.HasFlag(BlockFlags.Flags))
             {
                 stream.WriteByte((byte)block.Flags);
             }
@@ -72,7 +72,7 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.ModificationTime))
+            if (flags.HasFlag(BlockFlags.ModificationTime))
             {
                 stream.Write(BitConverter.GetBytes((int)block.ModificationTime.ToUnixTimeSeconds()), 0, 4);
             }
@@ -81,7 +81,7 @@ namespace VBessonov.GZip.Core
                 stream.Position += 4;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.ExtraFlags))
+            if (flags.HasFlag(BlockFlags.ExtraFlags))
             {
                 stream.WriteByte(block.ExtraFlags);
             }
@@ -90,7 +90,7 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.OS))
+            if (flags.HasFlag(BlockFlags.OS))
             {
                 stream.WriteByte(block.OS);
             }
@@ -99,13 +99,13 @@ namespace VBessonov.GZip.Core
                 stream.Position++;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.ExtraField) && (block.Flags.HasFlag(GZipFlags.FEXTRA)))
+            if (flags.HasFlag(BlockFlags.ExtraField) && (block.Flags.HasFlag(GZipFlags.FEXTRA)))
             {
                 InsertIntoStream(stream, BitConverter.GetBytes((ushort)block.ExtraField.Length));
                 InsertIntoStream(stream, block.ExtraField);
             }
 
-            if (flags.HasFlag(GZipBlockFlags.OriginalFileName) && (block.Flags.HasFlag(GZipFlags.FNAME)))
+            if (flags.HasFlag(BlockFlags.OriginalFileName) && (block.Flags.HasFlag(GZipFlags.FNAME)))
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(block.OriginalFileName);
                 byte[] data = new byte[buffer.Length + 1];
@@ -116,7 +116,7 @@ namespace VBessonov.GZip.Core
                 InsertIntoStream(stream, data);
             }
 
-            if (flags.HasFlag(GZipBlockFlags.Comment) && (block.Flags.HasFlag(GZipFlags.FCOMMENT)))
+            if (flags.HasFlag(BlockFlags.Comment) && (block.Flags.HasFlag(GZipFlags.FCOMMENT)))
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(block.Comment);
                 byte[] data = new byte[buffer.Length + 1];
@@ -127,19 +127,19 @@ namespace VBessonov.GZip.Core
                 InsertIntoStream(stream, data);
             }
 
-            if (flags.HasFlag(GZipBlockFlags.CRC16) && (block.Flags.HasFlag(GZipFlags.FHCRC)))
+            if (flags.HasFlag(BlockFlags.CRC16) && (block.Flags.HasFlag(GZipFlags.FHCRC)))
             {
                 InsertIntoStream(stream, BitConverter.GetBytes(block.CRC16));
             }
 
-            if (flags.HasFlag(GZipBlockFlags.CompressedBlocks))
+            if (flags.HasFlag(BlockFlags.CompressedBlocks))
             {
                 stream.Write(block.CompressedBlocks, 0, block.CompressedBlocks.Length);
             }
 
-            if (flags.HasFlag(GZipBlockFlags.CRC32))
+            if (flags.HasFlag(BlockFlags.CRC32))
             {
-                if (!flags.HasFlag(GZipBlockFlags.CompressedBlocks))
+                if (!flags.HasFlag(BlockFlags.CompressedBlocks))
                 {
                     throw new ArgumentException("Unknown compressed block size");
                 }
@@ -155,9 +155,9 @@ namespace VBessonov.GZip.Core
                 stream.Position += 4;
             }
 
-            if (flags.HasFlag(GZipBlockFlags.OriginalFileSize))
+            if (flags.HasFlag(BlockFlags.OriginalFileSize))
             {
-                if (!flags.HasFlag(GZipBlockFlags.CompressedBlocks))
+                if (!flags.HasFlag(BlockFlags.CompressedBlocks))
                 {
                     throw new ArgumentException("Unknown compressed block size");
                 }

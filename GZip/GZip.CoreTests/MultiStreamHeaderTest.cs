@@ -5,33 +5,33 @@ using VBessonov.GZip.Core;
 namespace VBessonov.GZip.CoreTests
 {
     [TestClass]
-    public class GZipMultiStreamHeaderTest
+    public class MultiStreamHeaderTest
     {
         [TestMethod]
         public void TestCanDeserializeSerializedHeader()
         {
-            GZipMultiStreamHeaderItem[] items = new[]
+            MultiStreamHeaderItem[] items = new[]
             {
-                new GZipMultiStreamHeaderItem
+                new MultiStreamHeaderItem
                 {
                     Length = ushort.MaxValue
                 },
-                new GZipMultiStreamHeaderItem
+                new MultiStreamHeaderItem
                 {
                     Length = ushort.MaxValue
                 },
-                new GZipMultiStreamHeaderItem
+                new MultiStreamHeaderItem
                 {
                     Length = ushort.MaxValue
                 },
-                new GZipMultiStreamHeaderItem
+                new MultiStreamHeaderItem
                 {
                     Length = ushort.MaxValue / 2
                 }
             };
             GZipMultiStreamHeader header = new GZipMultiStreamHeader();
 
-            foreach (GZipMultiStreamHeaderItem item in items)
+            foreach (MultiStreamHeaderItem item in items)
             {
                 header.Items.Add(item);
             }

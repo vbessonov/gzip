@@ -51,9 +51,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="GZipBlockReaderWriterTest.cs" />
-    <Compile Include="GZipMultiStreamHeaderItemTest.cs" />
-    <Compile Include="GZipMultiStreamHeaderTest.cs" />
+    <Compile Include="BlockReaderWriterTest.cs" />
+    <Compile Include="MultiStreamHeaderItemTest.cs" />
+    <Compile Include="MultiStreamHeaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils.cs" />
   </ItemGroup>
