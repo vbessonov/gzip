@@ -1,6 +1,7 @@
 ﻿using System;
 using Vbessonov.GZip.CUI;
 using VBessonov.GZip.Core.Compression;
+using VBessonov.GZip.Core.Hash;
 
 namespace VBessonov.GZip.CUI
 {
@@ -10,14 +11,14 @@ namespace VBessonov.GZip.CUI
             Options options,
             string[] args,
             out string invokedVerb,
-            out CommonSubOptions invokeSubOptions)
+            out FileSubOptions invokeSubOptions)
         {
             invokedVerb = null;
             invokeSubOptions = null;
 
             int resultCode = 1;
             string currentInvokedVerb = null;
-            CommonSubOptions currentInvokedSubOptions = null;
+            FileSubOptions currentInvokedSubOptions = null;
 
             do
             {
@@ -27,7 +28,7 @@ namespace VBessonov.GZip.CUI
                     (verb, subOptions) =>
                     {
                         currentInvokedVerb = verb;
-                        currentInvokedSubOptions = subOptions as CommonSubOptions;
+                        currentInvokedSubOptions = subOptions as FileSubOptions;
                     }
                 );
 
@@ -81,7 +82,7 @@ namespace VBessonov.GZip.CUI
                 compressor.Compress(options.InputFile, options.OutputFile);
                 resultCode = 0;
 
-                Console.WriteLine("The file has been successfully compressed.");
+                Console.WriteLine("The file has been successfully compressed");
             }
             catch (Exception exception)
             {
@@ -122,7 +123,38 @@ namespace VBessonov.GZip.CUI
                 decompressor.Decompress(options.InputFile, options.OutputFile);
                 resultCode = 0;
 
-                Console.WriteLine("The file has been successfully decompressed.");
+                Console.WriteLine("The file has been successfully decompressed");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("An unexpected error has occured: {0}", exception.Message);
+            }
+
+            return resultCode;
+        }
+
+        private static int Compare(CompareSubOptions options)
+        {
+            int resultCode = 0;
+            IComparer comparer = new Comparer();
+
+            if (options.HashType.HasValue)
+            {
+                comparer.Settings.HashType = options.HashType.Value;
+            }
+
+            try
+            {
+                bool result = comparer.Compare(options.InputFile, options.OutputFile);
+
+                if (result)
+                {
+                    Console.WriteLine("Files are the same");
+                }
+                else
+                {
+                    Console.WriteLine("Files are not the same");
+                }
             }
             catch (Exception exception)
             {
@@ -136,7 +168,7 @@ namespace VBessonov.GZip.CUI
         {
             Options options = new Options();
             string invokedVerb;
-            CommonSubOptions invokedSubOptions;
+            FileSubOptions invokedSubOptions;
 
             int resultCode = ParseCommandLine(options, args, out invokedVerb, out invokedSubOptions);
 
@@ -150,6 +182,10 @@ namespace VBessonov.GZip.CUI
 
                     case DecompressSubOptions.VerbName:
                         resultCode = Decompress((DecompressSubOptions)invokedSubOptions);
+                        break;
+
+                    case CompareSubOptions.VerbName:
+                        resultCode = Compare((CompareSubOptions)invokedSubOptions);
                         break;
 
                     default:

@@ -14,7 +14,6 @@ namespace VBessonov.GZip.CoreTests
             ushort length = ushort.MaxValue;
             GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem
             {
-                Offset = offset,
                 Length = length
             };
             byte[] buffer = item.Serialize();
@@ -38,7 +37,6 @@ namespace VBessonov.GZip.CoreTests
 
             item.Deserialize(buffer);
 
-            Assert.AreEqual(offset, item.Offset);
             Assert.AreEqual(length, item.Length);
         }
 
@@ -49,7 +47,6 @@ namespace VBessonov.GZip.CoreTests
             ushort length = ushort.MaxValue;
             GZipMultiStreamHeaderItem item = new GZipMultiStreamHeaderItem
             {
-                Offset = offset,
                 Length = length
             };
             byte[] buffer = item.Serialize();
@@ -57,7 +54,6 @@ namespace VBessonov.GZip.CoreTests
 
             newItem.Deserialize(buffer);
 
-            Assert.AreEqual(offset, newItem.Offset);
             Assert.AreEqual(length, newItem.Length);
         }
     }

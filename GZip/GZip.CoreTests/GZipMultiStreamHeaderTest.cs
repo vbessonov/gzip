@@ -14,22 +14,18 @@ namespace VBessonov.GZip.CoreTests
             {
                 new GZipMultiStreamHeaderItem
                 {
-                    Offset = 0,
                     Length = ushort.MaxValue
                 },
                 new GZipMultiStreamHeaderItem
                 {
-                    Offset = ushort.MaxValue,
                     Length = ushort.MaxValue
                 },
                 new GZipMultiStreamHeaderItem
                 {
-                    Offset = ushort.MaxValue * 2,
                     Length = ushort.MaxValue
                 },
                 new GZipMultiStreamHeaderItem
                 {
-                    Offset = ushort.MaxValue * 3,
                     Length = ushort.MaxValue / 2
                 }
             };

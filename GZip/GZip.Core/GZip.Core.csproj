@@ -84,6 +84,11 @@
     <Compile Include="GZipMultiStreamHeader.cs" />
     <Compile Include="GZipMultiStreamHeaderItem.cs" />
     <Compile Include="Compression\IReader.cs" />
+    <Compile Include="Hash\HashAlgorithmFactory.cs" />
+    <Compile Include="Hash\HashAlgorithmType.cs" />
+    <Compile Include="Hash\IComparer.cs" />
+    <Compile Include="Hash\Comparer.cs" />
+    <Compile Include="Hash\ComparerSettings.cs" />
     <Compile Include="IGZipBlockReader.cs" />
     <Compile Include="IGZipBlockWriter.cs" />
     <Compile Include="ISerializable.cs" />
@@ -105,6 +110,7 @@
     <Compile Include="Compression\Workers\ThreadWorker.cs" />
     <Compile Include="Compression\Workers\WorkerParameter.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

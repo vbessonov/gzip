@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompareSubOptions.cs" />
     <Compile Include="CommonSubOptions.cs" />
     <Compile Include="CompressSubOptions.cs" />
     <Compile Include="DecompressSubOptions.cs" />

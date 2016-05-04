@@ -11,6 +11,9 @@ namespace Vbessonov.GZip.CUI
         [VerbOption(DecompressSubOptions.VerbName, HelpText = "Decompress the file.")]
         public DecompressSubOptions DecompressVerb { get; set; }
 
+        [VerbOption(CompareSubOptions.VerbName, HelpText = "Compare two files.")]
+        public CompareSubOptions CompareVerb { get; set; }
+
         [HelpOption]
         public string GetUsage()
         {
