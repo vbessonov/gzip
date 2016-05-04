@@ -38,30 +38,6 @@ namespace VBessonov.GZip.Core.Compression
             }
         }
 
-        //protected override void ProcessInputStream(InputWorkItem workItem, Stream decompressionStream)
-        //{
-        //    base.ProcessInputStream(workItem, decompressionStream);
-        //}
-
-        //protected override void ProcessInputStreamChunk(InputWorkItem workItem, IStreamChunk inputStreamChunk, Stream decompressionStream)
-        //{
-            
-        //    //using (Stream chunkStream = new BufferedStream(inputStreamChunk.Stream))
-        //    //{
-        //    //    byte[] buffer = new byte[inputStreamChunk.Length];
-        //    //    int readedBytes = inputStreamChunk.Stream.Read(buffer, 0, (int)inputStreamChunk.Length);
-
-        //    //    if (readedBytes < inputStreamChunk.Length)
-        //    //    {
-        //    //        throw new CompressionException("Cannot read input stream");
-        //    //    }
-
-        //    //    decompressionStream.Write(buffer, 0, inputStreamChunk.Length);
-        //    //}
-
-        //    CheckMemoryStatus(workItem);
-        //}
-
         public void Process(InputWorkItem workItem)
         {
             using (GZipStream decompressionStream = new GZipStream(workItem.InputStream.Stream, CompressionMode.Decompress, false))
