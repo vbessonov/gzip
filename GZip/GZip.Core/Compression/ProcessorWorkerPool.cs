@@ -59,8 +59,17 @@ namespace VBessonov.GZip.Core.Compression
             {
                 IProcessor processor = _processorFactory.Create();
                 ProcessorWorker worker = new ProcessorWorker(processor);
+                worker.WorkCompleted += OnWorkCompleted;
 
                 _workers.Add(worker);
+            }
+        }
+
+        private void OnWorkCompleted(object sender, WorkCompletedEventArgs eventArgs)
+        {
+            if (eventArgs.Error != null)
+            {
+                throw eventArgs.Error;
             }
         }
 
@@ -69,7 +78,7 @@ namespace VBessonov.GZip.Core.Compression
             return _workers.GetEnumerator();
         }
 
-        public void Work(InputQueue inputQueue)
+        public void WorkAsync(InputQueue inputQueue)
         {
             if (inputQueue == null)
             {
@@ -80,7 +89,7 @@ namespace VBessonov.GZip.Core.Compression
 
             foreach (ProcessorWorker worker in _workers)
             {
-                worker.Work(new WorkerParameter<InputQueue> { Parameter = inputQueue });
+                worker.WorkAsync(new WorkerParameter<InputQueue> { Parameter = inputQueue });
             }
         }
 

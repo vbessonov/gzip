@@ -16,7 +16,7 @@ namespace VBessonov.GZip.Core.Compression
 
             _processor = processor;
 
-            Thread.Name = "Compression Worker";
+            Thread.Name = "Processor Worker";
         }
 
         private InputWorkItem GetWorkItem(InputQueue inputQueue)

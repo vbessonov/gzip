@@ -6,7 +6,7 @@ using VBessonov.GZip.Core.Compression.Streams;
 
 namespace VBessonov.GZip.Core.Compression
 {
-    public class Decompressor : IDecompressor
+    public class Decompressor : CompressionAlgorithm, IDecompressor
     {
         private readonly DecompressorSettings _settings;
 
@@ -36,28 +36,14 @@ namespace VBessonov.GZip.Core.Compression
             return new DecompressorSettings();
         }
 
+        protected override CompressionSettings GetSettings()
+        {
+            return _settings;
+        }
+
         public void Decompress(string inputFilePath, string outputFilePath)
         {
-            if (string.IsNullOrEmpty(inputFilePath))
-            {
-                throw new ArgumentException("Input file path must be non-empty string");
-            }
-            if (!File.Exists(inputFilePath))
-            {
-                throw new ArgumentException("Input file must exist");
-            }
-            if (string.IsNullOrEmpty(outputFilePath))
-            {
-                throw new ArgumentException("Output file path must be non-empty string");
-            }
-
-            IEnumerable<InputStream> inputStreams = _settings.Reader.Read(inputFilePath);
-            OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
-            InputQueue inputQueue = _settings.InputQueueFactory.Create(inputFilePath, outputFilePath, inputStreams, outputQueue);
-
-            _settings.WorkerPool.Work(inputQueue);
-
-            _settings.Writer.Write(outputFilePath, outputQueue);
+            Process(inputFilePath, outputFilePath);
         }
     }
 }

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compression\CompressionAlgorithm.cs" />
     <Compile Include="Compression\CompressionSettings.cs" />
     <Compile Include="Compression\CompressionException.cs" />
     <Compile Include="Compression\Compressor.cs" />
@@ -67,8 +68,13 @@
     <Compile Include="Compression\IInputQueueFactory.cs" />
     <Compile Include="Compression\InputQueueFactory.cs" />
     <Compile Include="Compression\Streams\ChunkedStream.cs" />
+    <Compile Include="Compression\Workers\SynchronizationContext.cs" />
+    <Compile Include="Compression\Workers\WorkCompletedEventArgs.cs" />
+    <Compile Include="Compression\Workers\WorkCompletedEventHandler.cs" />
     <Compile Include="Compression\Writer.cs" />
     <Compile Include="Compression\WriterSettings.cs" />
+    <Compile Include="Compression\WriterWorker.cs" />
+    <Compile Include="Compression\WriterWorkerParameter.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="GZipBlock.cs" />

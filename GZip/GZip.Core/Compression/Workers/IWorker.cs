@@ -4,6 +4,8 @@ namespace VBessonov.GZip.Core.Compression.Workers
 {
     public interface IWorker<T>
     {
-        void Work(WorkerParameter<T> parameter);
+        void WorkAsync(WorkerParameter<T> parameter);
+
+        event WorkCompletedEventHandler WorkCompleted;
     }
 }
