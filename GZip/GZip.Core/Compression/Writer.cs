@@ -1,16 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace VBessonov.GZip.Core.Compression
 {
     public class Writer : IWriter
     {
-        public WriterSettings Settings
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public void Write(string outputFilePath, OutputQueue outputQueue)
+        public void Write(string outputFilePath, OutputQueue outputQueue, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(outputFilePath))
             {
@@ -29,6 +25,10 @@ namespace VBessonov.GZip.Core.Compression
 
                 while (true)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     if (!outputQueue.Contains(index))
                     {
                         outputQueue.Event.WaitOne();

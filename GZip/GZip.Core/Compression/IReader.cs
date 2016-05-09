@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 
 namespace VBessonov.GZip.Core.Compression
@@ -7,6 +8,6 @@ namespace VBessonov.GZip.Core.Compression
     {
         ReaderSettings Settings { get; }
 
-        IEnumerable<InputStream> Read(string inputFilePath);
+        IEnumerable<InputStream> Read(string inputFilePath, CancellationToken cancellationToken);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 using VBessonov.GZip.Core.Compression.Utils;
 using VBessonov.GZip.Core.WinApi;
@@ -38,15 +39,15 @@ namespace VBessonov.GZip.Core.Compression
             }
         }
 
-        public void Process(InputWorkItem workItem)
+        public void Process(InputWorkItem workItem, CancellationToken cancellationToken)
         {
-            using (GZipStream decompressionStream = new GZipStream(workItem.InputStream.Stream, CompressionMode.Decompress, false))
+            using (InputStream inputStream = workItem.InputStream)
+            using (GZipStream decompressionStream = new GZipStream(inputStream.Stream, CompressionMode.Decompress, false))
             {
                 decompressionStream.CopyTo(workItem.OutputStream.Stream);
-                workItem.InputStream.Dispose();
-
-                CheckMemoryStatus(workItem);
             }
+
+            CheckMemoryStatus(workItem);
 
             workItem.OutputQueue.Add(new OutputWorkItem(workItem.OutputStream));
         }

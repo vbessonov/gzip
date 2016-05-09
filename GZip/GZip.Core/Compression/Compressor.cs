@@ -13,10 +13,6 @@ namespace VBessonov.GZip.Core.Compression
     {
         private readonly CompressorSettings _settings;
 
-        private ManualResetEvent _event = new ManualResetEvent(false);
-
-        public event CompressionCompletedEventHandler CompressionCompleted;
-
         public CompressorSettings Settings
         {
             get { return _settings; }
@@ -60,7 +56,13 @@ namespace VBessonov.GZip.Core.Compression
             return _settings;
         }
 
-        protected override void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, UserTask writerTask, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
+        protected override void RunWriter(
+            IEnumerable<ProcessorWorker> processorWorkers,
+            IWriter writer,
+            UserTask writerTask,
+            string outputFilePath,
+            OutputQueue outputQueue,
+            Action<TaskStatus> callback)
         {
             UserTask newWriterTask = writerTask;
 
@@ -85,18 +87,26 @@ namespace VBessonov.GZip.Core.Compression
             base.RunWriter(processorWorkers, writer, newWriterTask, outputFilePath, outputQueue, callback);
         }
 
-        public void CompressAsync(string inputFilePath, string outputFilePath)
+        public void CompressAsync(string inputFile, string outputFile)
+        {
+            CompressAsync(inputFile, outputFile, null);
+        }
+
+        public void CompressAsync(string inputFile, string outputFile, Action<CompressionCompletedEventArgs> callback)
+        {
+            CompressAsync(inputFile, outputFile, callback, CancellationToken.None);
+        }
+
+        public void CompressAsync(string inputFilePath, string outputFilePath, Action<CompressionCompletedEventArgs> callback, CancellationToken cancellationToken)
         {
             Process(
                 inputFilePath,
                 outputFilePath,
-                (sender, args) =>
+                (args) =>
                 {
-                    if (CompressionCompleted != null)
-                    {
-                        CompressionCompleted(this, new CompressionCompletedEventArgs(args.Error, args.Cancelled));
-                    }
-                }
+                    callback(args);
+                },
+                cancellationToken
             );
         }
     }

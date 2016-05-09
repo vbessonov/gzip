@@ -1,16 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace VBessonov.GZip.Core.Compression
 {
     public class MultiStreamWriter : IWriter
     {
-        public WriterSettings Settings
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public void Write(string outputFilePath, OutputQueue outputQueue)
+        public void Write(string outputFilePath, OutputQueue outputQueue, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(outputFilePath))
             {
@@ -25,6 +21,11 @@ namespace VBessonov.GZip.Core.Compression
 
             for (int i = 0; i < outputQueue.Count; i++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 OutputWorkItem workItem = outputQueue[i];
                 MultiStreamHeaderItem multiStreamHeaderItem = new MultiStreamHeaderItem
                 {
@@ -41,6 +42,11 @@ namespace VBessonov.GZip.Core.Compression
 
             Block block = blockReader.Read(firstOutputWorkItem.OutputStream.Stream, BlockFlags.All);
 
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             block.ExtraField = multiStreamHeader.Serialize();
             multiStreamHeader.Items[0].Length = block.Length;
             block.ExtraField = multiStreamHeader.Serialize();
@@ -54,6 +60,11 @@ namespace VBessonov.GZip.Core.Compression
 
                 for (int i = 1; i < outputQueue.Count; i++)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
                     OutputWorkItem workItem = outputQueue[i];
 
                     using (Stream compressedStream = workItem.OutputStream.Stream)

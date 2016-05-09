@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 
 namespace VBessonov.GZip.Core.Compression
@@ -45,16 +46,24 @@ namespace VBessonov.GZip.Core.Compression
 
         public void DecompressAsync(string inputFilePath, string outputFilePath)
         {
+            DecompressAsync(inputFilePath, outputFilePath, null);
+        }
+
+        public void DecompressAsync(string inputFilePath, string outputFilePath, Action<CompressionCompletedEventArgs> callback)
+        {
+            DecompressAsync(inputFilePath, outputFilePath, callback, CancellationToken.None);
+        }
+
+        public void DecompressAsync(string inputFilePath, string outputFilePath, Action<CompressionCompletedEventArgs> callback, CancellationToken cancellationToken)
+        {
             Process(
                 inputFilePath,
                 outputFilePath,
-                (sender, args) =>
+                (args) =>
                 {
-                    if (DecompressionCompleted != null)
-                    {
-                        DecompressionCompleted(this, new CompressionCompletedEventArgs(args.Error, args.Cancelled));
-                    }
-                }
+                    callback(args);
+                },
+                cancellationToken
             );
         }
     }

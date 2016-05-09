@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 using VBessonov.GZip.Core.WinApi;
 
@@ -43,7 +44,7 @@ namespace VBessonov.GZip.Core.Compression
             return settings;
         }
 
-        public IEnumerable<InputStream> Read(string fileName)
+        public IEnumerable<InputStream> Read(string fileName, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -80,6 +81,10 @@ namespace VBessonov.GZip.Core.Compression
 
                 while (size > 0)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     if (size < chunkSize)
                     {
                         chunkSize = (int)size;

@@ -1,15 +1,21 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 
 namespace VBessonov.GZip.Core.Compression
 {
     public class CompressorProcessor : IProcessor
     {
-        protected virtual void ProcessInputStream(InputWorkItem workItem, Stream compressionStream)
+        protected virtual void ProcessInputStream(InputWorkItem workItem, Stream compressionStream, CancellationToken cancellationToken)
         {
             foreach (IStreamChunk inputStreamChunk in workItem.InputStream.Chunks)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 ProcessInputStreamChunk(workItem, inputStreamChunk, compressionStream);
             }
         }
@@ -30,11 +36,11 @@ namespace VBessonov.GZip.Core.Compression
             }
         }
 
-        public void Process(InputWorkItem workItem)
+        public void Process(InputWorkItem workItem, CancellationToken cancellationToken)
         {
             using (GZipStream compressionStream = new GZipStream(workItem.OutputStream.Stream, CompressionMode.Compress, true))
             {
-                ProcessInputStream(workItem, compressionStream);
+                ProcessInputStream(workItem, compressionStream, cancellationToken);
             }
 
             workItem.OutputQueue.Add(new OutputWorkItem(workItem.OutputStream));

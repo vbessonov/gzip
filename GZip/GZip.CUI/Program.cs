@@ -85,17 +85,34 @@ namespace VBessonov.GZip.CUI
 
             Exception error = null;
             bool completed = false;
+            bool canceled = false;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            compressor.CompressionCompleted +=
-                (sender, eventArgs) =>
+            Console.CancelKeyPress +=
+                (sender, args) =>
                 {
+                    cancellationTokenSource.Cancel();
+
                     completed = true;
-                    error = eventArgs.Error;
+                    canceled = true;
+                    args.Cancel = true;
                 };
+
+            Console.WriteLine("Compression has started. Press CTRL+C to interupt...");
 
             try
             {
-                compressor.CompressAsync(options.InputFile, options.OutputFile);
+                compressor.CompressAsync(
+                    options.InputFile,
+                    options.OutputFile,
+                    (args) =>
+                    {
+                        completed = true;
+                        canceled = args.Cancelled;
+                        error = args.Error;
+                    },
+                    cancellationTokenSource.Token
+                );
 
                 while (!completed)
                 {
@@ -106,6 +123,10 @@ namespace VBessonov.GZip.CUI
                 {
                     PrintError(error);
                     resultCode = 1;
+                }
+                else if (canceled)
+                {
+                    Console.WriteLine("Compression has been interrupted");
                 }
                 else
                 {
@@ -152,17 +173,34 @@ namespace VBessonov.GZip.CUI
 
             Exception error = null;
             bool completed = false;
+            bool canceled = false;
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            decompressor.DecompressionCompleted +=
-                (sender, eventArgs) =>
+            Console.CancelKeyPress +=
+                (sender, args) =>
                 {
+                    cancellationTokenSource.Cancel();
+
                     completed = true;
-                    error = eventArgs.Error;
+                    canceled = true;
+                    args.Cancel = true;
                 };
+
+            Console.WriteLine("Decompression has started. Press CTRL+C to interupt...");
 
             try
             {
-                decompressor.DecompressAsync(options.InputFile, options.OutputFile);
+                decompressor.DecompressAsync(
+                    options.InputFile,
+                    options.OutputFile,
+                    (args) =>
+                    {
+                        completed = true;
+                        canceled = args.Cancelled;
+                        error = args.Error;
+                    },
+                    cancellationTokenSource.Token
+                );
 
                 while (!completed)
                 {
@@ -173,6 +211,10 @@ namespace VBessonov.GZip.CUI
                 {
                     PrintError(error);
                     resultCode = 1;
+                }
+                else if (canceled)
+                {
+                    Console.WriteLine("Decompression has been interrupted");
                 }
                 else
                 {

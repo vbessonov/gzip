@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -8,6 +9,8 @@ namespace VBessonov.GZip.Core.Compression
 
         void CompressAsync(string inputFile, string outputFile);
 
-        event CompressionCompletedEventHandler CompressionCompleted;
+        void CompressAsync(string inputFile, string outputFile, Action<CompressionCompletedEventArgs> callback);
+
+        void CompressAsync(string inputFile, string outputFile, Action<CompressionCompletedEventArgs> callback, CancellationToken cancellationToken);
     }
 }

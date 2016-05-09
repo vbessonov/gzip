@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
 using VBessonov.GZip.Threads;
+using ThreadPool = VBessonov.GZip.Threads.ThreadPool;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -17,13 +19,13 @@ namespace VBessonov.GZip.Core.Compression
             return GetSettings().Writer;
         }
 
-        protected virtual void RunProcessors(IEnumerable<ProcessorWorker> processorWorkers, InputQueue inputQueue, Action<TaskStatus> callback)
+        protected virtual void RunProcessors(IEnumerable<ProcessorWorker> processorWorkers, InputQueue inputQueue, Action<TaskStatus> callback, CancellationToken cancellationToken)
         {
             foreach (ProcessorWorker processorWorker in processorWorkers)
             {
                 ThreadPool.QueueUserTask(
                     processorWorker.Work,
-                    inputQueue,
+                    new ProcessorWorkerParameter(inputQueue, cancellationToken),
                     callback
                 );
             }
@@ -44,7 +46,7 @@ namespace VBessonov.GZip.Core.Compression
             );
         }
 
-        protected void Process(string inputFilePath, string outputFilePath, AsyncCompletedEventHandler callback)
+        protected void Process(string inputFilePath, string outputFilePath, Action<CompressionCompletedEventArgs> callback, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(inputFilePath))
             {
@@ -59,8 +61,14 @@ namespace VBessonov.GZip.Core.Compression
                 throw new ArgumentException("Output file must be non-empty string");
             }
 
+            if (cancellationToken.IsCancellationRequested)
+            {
+                callback(new CompressionCompletedEventArgs(null, cancellationToken.IsCancellationRequested));
+                return;
+            }
+
             List<Exception> errors = new List<Exception>();
-            IEnumerable<InputStream> inputStreams = GetSettings().Reader.Read(inputFilePath);
+            IEnumerable<InputStream> inputStreams = GetSettings().Reader.Read(inputFilePath, cancellationToken);
             OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
             InputQueue inputQueue = GetSettings().InputQueueFactory.Create(inputFilePath, outputFilePath, inputStreams, outputQueue);
             List<ProcessorWorker> processorWorkers = new List<ProcessorWorker>();
@@ -82,7 +90,8 @@ namespace VBessonov.GZip.Core.Compression
                     {
                         errors.Add(taskStatus.Error);
                     }
-                }
+                },
+                cancellationToken
             );
 
             RunWriter(
@@ -90,7 +99,7 @@ namespace VBessonov.GZip.Core.Compression
                 writer,
                 (parameter) =>
                 {
-                    writer.Write(outputFilePath, outputQueue);
+                    writer.Write(outputFilePath, outputQueue, cancellationToken);
                 },
                 outputFilePath,
                 outputQueue,
@@ -108,7 +117,7 @@ namespace VBessonov.GZip.Core.Compression
                         error = new AggregateException(errors);
                     }
 
-                    callback(this, new AsyncCompletedEventArgs(error, false, null));
+                    callback(new CompressionCompletedEventArgs(error, cancellationToken.IsCancellationRequested));
                 }
             );
         }

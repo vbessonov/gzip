@@ -47,10 +47,16 @@ namespace VBessonov.GZip.Core.Compression
 
         public void Work(object parameter)
         {
-            InputQueue inputQueue = (InputQueue)parameter;
+            ProcessorWorkerParameter processorWorkerParameter = (ProcessorWorkerParameter)parameter;
+            InputQueue inputQueue = processorWorkerParameter.InputQueue;
 
             while (true)
             {
+                if (processorWorkerParameter.CancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 InputWorkItem workItem = GetWorkItem(inputQueue);
 
                 if (workItem == null)
@@ -58,7 +64,7 @@ namespace VBessonov.GZip.Core.Compression
                     break;
                 }
 
-                _processor.Process(workItem);
+                _processor.Process(workItem, processorWorkerParameter.CancellationToken);
             }
 
             _event.Set();

@@ -63,6 +63,7 @@
     <Compile Include="Compression\IProcessor.cs" />
     <Compile Include="Compression\MultiStreamWriter.cs" />
     <Compile Include="Compression\CompressorProcessor.cs" />
+    <Compile Include="Compression\ProcessorWorkerParameter.cs" />
     <Compile Include="Compression\ReaderSettings.cs" />
     <Compile Include="Compression\CompressorProcessorFactory.cs" />
     <Compile Include="Compression\IProcessorFactory.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="Compression\InputQueueFactory.cs" />
     <Compile Include="Compression\Streams\ChunkedStream.cs" />
     <Compile Include="Compression\Writer.cs" />
-    <Compile Include="Compression\WriterSettings.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Block.cs" />
