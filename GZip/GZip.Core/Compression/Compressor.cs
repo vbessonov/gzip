@@ -45,7 +45,7 @@ namespace VBessonov.GZip.Core.Compression
 
         protected override IWriter CreateWriter(InputQueue inputQueue)
         {
-            if (_settings.CreateMultiStream && inputQueue.Count > 0)
+            if (_settings.CreateMultiStream && inputQueue.Count > 1)
             {
                 return _settings.MultiStreamWriter;
             }
@@ -60,21 +60,29 @@ namespace VBessonov.GZip.Core.Compression
             return _settings;
         }
 
-        protected override void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
+        protected override void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, UserTask writerTask, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
         {
+            UserTask newWriterTask = writerTask;
+
             if (_settings.CreateMultiStream && outputQueue.Capacity > 1)
             {
-                List<EventWaitHandle> waitHandles = new List<EventWaitHandle>();
+                newWriterTask =
+                    (parameter) =>
+                    {
+                        List<EventWaitHandle> waitHandles = new List<EventWaitHandle>();
 
-                foreach (ProcessorWorker processorWorker in processorWorkers)
-                {
-                    waitHandles.Add(processorWorker.Event);
-                }
+                        foreach (ProcessorWorker processorWorker in processorWorkers)
+                        {
+                            waitHandles.Add(processorWorker.Event);
+                        }
 
-                EventWaitHandle.WaitAll(waitHandles.ToArray());
+                        EventWaitHandle.WaitAll(waitHandles.ToArray());
+
+                        writerTask.Invoke(parameter);
+                    };
             }
 
-            base.RunWriter(processorWorkers, writer, outputFilePath, outputQueue, callback);
+            base.RunWriter(processorWorkers, writer, newWriterTask, outputFilePath, outputQueue, callback);
         }
 
         public void CompressAsync(string inputFilePath, string outputFilePath)

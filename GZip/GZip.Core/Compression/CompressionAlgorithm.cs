@@ -29,13 +29,16 @@ namespace VBessonov.GZip.Core.Compression
             }
         }
 
-        protected virtual void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
+        protected virtual void RunWriter(
+            IEnumerable<ProcessorWorker> processorWorkers,
+            IWriter writer,
+            UserTask writerTask,
+            string outputFilePath,
+            OutputQueue outputQueue,
+            Action<TaskStatus> callback)
         {
             ThreadPool.QueueUserTask(
-                (parameter) =>
-                {
-                    writer.Write(outputFilePath, outputQueue);
-                },
+                writerTask,
                 null,
                 callback
             );
@@ -85,6 +88,10 @@ namespace VBessonov.GZip.Core.Compression
             RunWriter(
                 processorWorkers,
                 writer,
+                (parameter) =>
+                {
+                    writer.Write(outputFilePath, outputQueue);
+                },
                 outputFilePath,
                 outputQueue,
                 (taskStatus) =>
