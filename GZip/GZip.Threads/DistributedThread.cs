@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace VBessonov.GZip.Core.Compression.Workers
+namespace VBessonov.GZip.Threads
 {
-    public class DistributedThread
+    internal class DistributedThread
     {
         private readonly Thread _thread;
 

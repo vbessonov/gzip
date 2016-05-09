@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using VBessonov.GZip.Core.Compression.Streams;
-using VBessonov.GZip.Core.Compression.Workers;
+using VBessonov.GZip.Threads;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -17,17 +17,31 @@ namespace VBessonov.GZip.Core.Compression
             return GetSettings().Writer;
         }
 
-        protected virtual void RunWriter(WriterWorker writerWorker, string outputFilePath, OutputQueue outputQueue)
+        protected virtual void RunProcessors(IEnumerable<ProcessorWorker> processorWorkers, InputQueue inputQueue, Action<TaskStatus> callback)
         {
-            writerWorker.WorkAsync(
-                new WorkerParameter<WriterWorkerParameter>
+            foreach (ProcessorWorker processorWorker in processorWorkers)
+            {
+                ThreadPool.QueueUserTask(
+                    processorWorker.Work,
+                    inputQueue,
+                    callback
+                );
+            }
+        }
+
+        protected virtual void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
+        {
+            ThreadPool.QueueUserTask(
+                (parameter) =>
                 {
-                    Parameter = new WriterWorkerParameter(outputFilePath, outputQueue)
-                }
+                    writer.Write(outputFilePath, outputQueue);
+                },
+                null,
+                callback
             );
         }
 
-        protected void Process(string inputFilePath, string outputFilePath)
+        protected void Process(string inputFilePath, string outputFilePath, AsyncCompletedEventHandler callback)
         {
             if (string.IsNullOrEmpty(inputFilePath))
             {
@@ -42,35 +56,54 @@ namespace VBessonov.GZip.Core.Compression
                 throw new ArgumentException("Output file must be non-empty string");
             }
 
-            QueuedSynchronizationContext syncContext = new QueuedSynchronizationContext();
-            AsyncOperationManager.SynchronizationContext = syncContext;
-
+            List<Exception> errors = new List<Exception>();
             IEnumerable<InputStream> inputStreams = GetSettings().Reader.Read(inputFilePath);
             OutputQueue outputQueue = new OutputQueue(inputStreams.Count());
             InputQueue inputQueue = GetSettings().InputQueueFactory.Create(inputFilePath, outputFilePath, inputStreams, outputQueue);
+            List<ProcessorWorker> processorWorkers = new List<ProcessorWorker>();
             IWriter writer = CreateWriter(inputQueue);
-            WriterWorker writerWorker = new WriterWorker(writer);
-            bool completed = false;
 
-            writerWorker.WorkCompleted +=
-                (sender, eventArgs) =>
+            for (int i = 0; i < inputQueue.Count; i++)
+            {
+                ProcessorWorker processorWorker = new ProcessorWorker(GetSettings().ProcessorFactory.Create());
+
+                processorWorkers.Add(processorWorker);
+            }
+
+            RunProcessors(
+                processorWorkers,
+                inputQueue,
+                (taskStatus) =>
                 {
-                    if (eventArgs.Error != null)
+                    if (taskStatus.Error != null)
                     {
-                        throw eventArgs.Error;
+                        errors.Add(taskStatus.Error);
+                    }
+                }
+            );
+
+            RunWriter(
+                processorWorkers,
+                writer,
+                outputFilePath,
+                outputQueue,
+                (taskStatus) =>
+                {
+                    if (taskStatus.Error != null)
+                    {
+                        errors.Add(taskStatus.Error);
                     }
 
-                    completed = true;
-                };
+                    Exception error = null;
 
-            GetSettings().WorkerPool.WorkAsync(inputQueue);
+                    if (errors.Count > 0)
+                    {
+                        error = new AggregateException(errors);
+                    }
 
-            RunWriter(writerWorker, outputFilePath, outputQueue);
-
-            while (!completed)
-            {
-                syncContext.Process();
-            }
+                    callback(this, new AsyncCompletedEventArgs(error, false, null));
+                }
+            );
         }
     }
 }

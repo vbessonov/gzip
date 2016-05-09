@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using VBessonov.GZip.Core.Compression.Streams;
-using VBessonov.GZip.Core.Compression.Workers;
+using VBessonov.GZip.Threads;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -14,6 +14,8 @@ namespace VBessonov.GZip.Core.Compression
         private readonly CompressorSettings _settings;
 
         private ManualResetEvent _event = new ManualResetEvent(false);
+
+        public event CompressionCompletedEventHandler CompressionCompleted;
 
         public CompressorSettings Settings
         {
@@ -58,22 +60,36 @@ namespace VBessonov.GZip.Core.Compression
             return _settings;
         }
 
-        protected override void RunWriter(WriterWorker writerWorker, string outputFilePath, OutputQueue outputQueue)
+        protected override void RunWriter(IEnumerable<ProcessorWorker> processorWorkers, IWriter writer, string outputFilePath, OutputQueue outputQueue, Action<TaskStatus> callback)
         {
-            if (_settings.CreateMultiStream && outputQueue.Capacity > 0)
+            if (_settings.CreateMultiStream && outputQueue.Capacity > 1)
             {
-                foreach (ProcessorWorker compressionWorker in _settings.WorkerPool)
+                List<EventWaitHandle> waitHandles = new List<EventWaitHandle>();
+
+                foreach (ProcessorWorker processorWorker in processorWorkers)
                 {
-                    compressionWorker.Thread.ManagedThread.Join();
+                    waitHandles.Add(processorWorker.Event);
                 }
+
+                EventWaitHandle.WaitAll(waitHandles.ToArray());
             }
 
-            base.RunWriter(writerWorker, outputFilePath, outputQueue);
+            base.RunWriter(processorWorkers, writer, outputFilePath, outputQueue, callback);
         }
 
-        public void Compress(string inputFilePath, string outputFilePath)
+        public void CompressAsync(string inputFilePath, string outputFilePath)
         {
-            Process(inputFilePath, outputFilePath);
+            Process(
+                inputFilePath,
+                outputFilePath,
+                (sender, args) =>
+                {
+                    if (CompressionCompleted != null)
+                    {
+                        CompressionCompleted(this, new CompressionCompletedEventArgs(args.Error, args.Cancelled));
+                    }
+                }
+            );
         }
     }
 }

@@ -1,14 +1,14 @@
 ﻿using CommandLine;
 using CommandLine.Text;
 
-namespace Vbessonov.GZip.CUI
+namespace VBessonov.GZip.CUI
 {
     internal class Options
     {
-        [VerbOption(CompressSubOptions.VerbName, HelpText = "Compress the file.")]
+        [VerbOption(CompressSubOptions.VerbName, HelpText = "CompressAsync the file.")]
         public CompressSubOptions CompressVerb { get; set; }
 
-        [VerbOption(DecompressSubOptions.VerbName, HelpText = "Decompress the file.")]
+        [VerbOption(DecompressSubOptions.VerbName, HelpText = "DecompressAsync the file.")]
         public DecompressSubOptions DecompressVerb { get; set; }
 
         [VerbOption(CompareSubOptions.VerbName, HelpText = "Compare two files.")]

@@ -10,6 +10,8 @@ namespace VBessonov.GZip.Core.Compression
     {
         private readonly DecompressorSettings _settings;
 
+        public event CompressionCompletedEventHandler DecompressionCompleted;
+
         public DecompressorSettings Settings
         {
             get { return _settings; }
@@ -41,9 +43,19 @@ namespace VBessonov.GZip.Core.Compression
             return _settings;
         }
 
-        public void Decompress(string inputFilePath, string outputFilePath)
+        public void DecompressAsync(string inputFilePath, string outputFilePath)
         {
-            Process(inputFilePath, outputFilePath);
+            Process(
+                inputFilePath,
+                outputFilePath,
+                (sender, args) =>
+                {
+                    if (DecompressionCompleted != null)
+                    {
+                        DecompressionCompleted(this, new CompressionCompletedEventArgs(args.Error, args.Cancelled));
+                    }
+                }
+            );
         }
     }
 }

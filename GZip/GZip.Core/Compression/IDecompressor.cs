@@ -6,6 +6,8 @@ namespace VBessonov.GZip.Core.Compression
     {
         DecompressorSettings Settings { get; }
 
-        void Decompress(string inputFile, string outputFile);
+        void DecompressAsync(string inputFile, string outputFile);
+
+        event CompressionCompletedEventHandler DecompressionCompleted;
     }
 }

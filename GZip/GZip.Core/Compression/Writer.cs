@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using VBessonov.GZip.Core.Compression.Workers;
 
 namespace VBessonov.GZip.Core.Compression
 {

@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F3F66C5-1336-4FB6-BA76-56EBEF41B8A4}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{7BFF17BA-61F8-4F8A-83A3-561C7ED4824B}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VBessonov.GZip.CUI</RootNamespace>
-    <AssemblyName>GZipTest</AssemblyName>
+    <RootNamespace>VBessonov.GZip.Threads</RootNamespace>
+    <AssemblyName>GZip.Threads</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,11 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommandLine">
-      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net40\CommandLine.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,24 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompareSubOptions.cs" />
-    <Compile Include="CommonSubOptions.cs" />
-    <Compile Include="CompressSubOptions.cs" />
-    <Compile Include="DecompressSubOptions.cs" />
-    <Compile Include="FileSubOptions.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ClientHandle.cs" />
+    <Compile Include="DistributedThread.cs" />
+    <Compile Include="TaskHandle.cs" />
+    <Compile Include="TaskItem.cs" />
+    <Compile Include="TaskState.cs" />
+    <Compile Include="TaskStatus.cs" />
+    <Compile Include="ThreadPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GZip.Core\GZip.Core.csproj">
-      <Project>{a5a67138-da06-4e3a-8ef5-859ed615ee36}</Project>
-      <Name>GZip.Core</Name>
-    </ProjectReference>
+    <Compile Include="UserTask.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,23 +1,18 @@
-﻿using CommandLine;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GZip.CUI")]
+[assembly: AssemblyTitle("GZip.Threads")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Vyacheslav Bessonov")]
-[assembly: AssemblyProduct("GZip.CUI")]
+[assembly: AssemblyProduct("GZip.Threads")]
 [assembly: AssemblyCopyright("Copyright © Vyacheslav Bessonov 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-// from CommandLineParser.Text
-[assembly: AssemblyLicense(
-    "This is free software. You may redistribute copies of it under the terms of",
-    "the MIT License <http://www.opensource.org/licenses/mit-license.php>.")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -25,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("11957184-dcf7-4dad-be37-1dbe8ba07f41")]
+[assembly: Guid("0db7f445-1f90-4e53-bb68-bd0962e6b8e5")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -39,5 +34,3 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-
-[assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]

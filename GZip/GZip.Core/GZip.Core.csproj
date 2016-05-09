@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compression\CompressionAlgorithm.cs" />
+    <Compile Include="Compression\CompressionCompletedEventArgs.cs" />
+    <Compile Include="Compression\CompressionCompletedEventHandler.cs" />
     <Compile Include="Compression\CompressionSettings.cs" />
     <Compile Include="Compression\CompressionException.cs" />
     <Compile Include="Compression\Compressor.cs" />
@@ -62,20 +64,13 @@
     <Compile Include="Compression\MultiStreamWriter.cs" />
     <Compile Include="Compression\CompressorProcessor.cs" />
     <Compile Include="Compression\ReaderSettings.cs" />
-    <Compile Include="Compression\ProcessorWorkerPool.cs" />
     <Compile Include="Compression\CompressorProcessorFactory.cs" />
     <Compile Include="Compression\IProcessorFactory.cs" />
     <Compile Include="Compression\IInputQueueFactory.cs" />
     <Compile Include="Compression\InputQueueFactory.cs" />
     <Compile Include="Compression\Streams\ChunkedStream.cs" />
-    <Compile Include="Compression\Workers\DistributedThread.cs" />
-    <Compile Include="Compression\Workers\QueuedSynchronizationContext.cs" />
-    <Compile Include="Compression\Workers\WorkCompletedEventArgs.cs" />
-    <Compile Include="Compression\Workers\WorkCompletedEventHandler.cs" />
     <Compile Include="Compression\Writer.cs" />
     <Compile Include="Compression\WriterSettings.cs" />
-    <Compile Include="Compression\WriterWorker.cs" />
-    <Compile Include="Compression\WriterWorkerParameter.cs" />
     <Compile Include="Extensions\BinaryReaderExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Block.cs" />
@@ -106,18 +101,18 @@
     <Compile Include="WinApi\SystemInfo.cs" />
     <Compile Include="Compression\Utils\TempFileStream.cs" />
     <Compile Include="WinApi\ProcessorArchitecture.cs" />
-    <Compile Include="Compression\Workers\CancellationToken.cs" />
-    <Compile Include="Compression\Workers\CancellationTokenSource.cs" />
     <Compile Include="Compression\OutputWorkItem.cs" />
     <Compile Include="Compression\InputWorkItem.cs" />
     <Compile Include="Compression\ProcessorWorker.cs" />
     <Compile Include="Compression\InputQueue.cs" />
-    <Compile Include="Compression\Workers\IWorker.cs" />
     <Compile Include="Compression\OutputQueue.cs" />
-    <Compile Include="Compression\Workers\ThreadWorker.cs" />
-    <Compile Include="Compression\Workers\WorkerParameter.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GZip.Threads\GZip.Threads.csproj">
+      <Project>{7bff17ba-61f8-4f8a-83a3-561c7ed4824b}</Project>
+      <Name>GZip.Threads</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

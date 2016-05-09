@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Vbessonov.GZip.CUI
+namespace VBessonov.GZip.CUI
 {
     internal class CommonSubOptions : FileSubOptions
     {
@@ -10,7 +10,10 @@ namespace Vbessonov.GZip.CUI
         [Option("chunk-size", Required = false, HelpText = "Size of a file chunk.")]
         public int? ChunkSize { get; set; }
 
-        [Option("workers-count", Required = false, HelpText = "Number of threads used for compression.")]
-        public int? WorkersCount { get; set; }
+        [Option("min-threads-count", Required = false, HelpText = "Minimum number of threads in thread pool.")]
+        public int? MinThreadsCount { get; set; }
+
+        [Option("max-threads-count", Required = false, HelpText = "Maximum number of threads in thread pool.")]
+        public int? MaxThreadsCount { get; set; }
     }
 }

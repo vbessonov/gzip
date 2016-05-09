@@ -1,5 +1,4 @@
 ﻿using System;
-using VBessonov.GZip.Core.Compression.Workers;
 using VBessonov.GZip.Core.WinApi;
 
 namespace VBessonov.GZip.Core.Compression

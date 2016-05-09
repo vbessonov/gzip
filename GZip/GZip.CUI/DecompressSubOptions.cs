@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Vbessonov.GZip.CUI
+namespace VBessonov.GZip.CUI
 {
     internal class DecompressSubOptions : CommonSubOptions
     {

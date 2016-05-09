@@ -1,11 +1,23 @@
 ﻿using System;
-using VBessonov.GZip.Core.Compression.Workers;
+using System.Threading;
 
 namespace VBessonov.GZip.Core.Compression
 {
-    public class ProcessorWorker : ThreadWorker<InputQueue>
+    public class ProcessorWorker
     {
         private readonly IProcessor _processor;
+
+        private readonly ManualResetEvent _event = new ManualResetEvent(false);
+
+        public IProcessor Processor
+        {
+            get { return _processor; }
+        }
+
+        public EventWaitHandle Event
+        {
+            get { return _event; }
+        }
 
         public ProcessorWorker(IProcessor processor)
         {
@@ -15,8 +27,6 @@ namespace VBessonov.GZip.Core.Compression
             }
 
             _processor = processor;
-
-            Thread.ManagedThread.Name = "Processor Worker";
         }
 
         private InputWorkItem GetWorkItem(InputQueue inputQueue)
@@ -35,9 +45,9 @@ namespace VBessonov.GZip.Core.Compression
             return workItem;
         }
 
-        protected override void InternalWork(WorkerParameter<InputQueue> parameter)
+        public void Work(object parameter)
         {
-            InputQueue inputQueue = parameter.Parameter;
+            InputQueue inputQueue = (InputQueue)parameter;
 
             while (true)
             {
@@ -50,6 +60,8 @@ namespace VBessonov.GZip.Core.Compression
 
                 _processor.Process(workItem);
             }
+
+            _event.Set();
         }
     }
 }

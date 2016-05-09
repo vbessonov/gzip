@@ -1,7 +1,7 @@
 ﻿using CommandLine;
 using VBessonov.GZip.Core.Hash;
 
-namespace Vbessonov.GZip.CUI
+namespace VBessonov.GZip.CUI
 {
     internal class CompareSubOptions : FileSubOptions
     {

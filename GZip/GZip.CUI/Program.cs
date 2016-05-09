@@ -1,7 +1,9 @@
 ﻿using System;
-using Vbessonov.GZip.CUI;
+using VBessonov.GZip.CUI;
 using VBessonov.GZip.Core.Compression;
 using VBessonov.GZip.Core.Hash;
+using System.Threading;
+using System.Diagnostics;
 
 namespace VBessonov.GZip.CUI
 {
@@ -55,14 +57,18 @@ namespace VBessonov.GZip.CUI
 
         private static int Compress(CompressSubOptions options)
         {
-            int resultCode = 1;
+            int resultCode = 0;
             ICompressor compressor = new Compressor();
 
             compressor.Settings.CreateMultiStream = options.CreateMultiStreamHeader;
 
-            if (options.WorkersCount.HasValue)
+            if (options.MinThreadsCount.HasValue)
             {
-                compressor.Settings.WorkerPool.MaxCount = options.WorkersCount.Value;
+                compressor.Settings.MinWorkersCount = options.MinThreadsCount.Value;
+            }
+            if (options.MaxThreadsCount.HasValue)
+            {
+                compressor.Settings.MaxWorkersCount = options.MaxThreadsCount.Value;
             }
             if (options.AvailableMemorySize.HasValue)
             {
@@ -77,16 +83,38 @@ namespace VBessonov.GZip.CUI
                 compressor.Settings.Reader.Settings.ChunkSize = options.ChunkSize.Value;
             }
 
+            Exception error = null;
+            bool completed = false;
+
+            compressor.CompressionCompleted +=
+                (sender, eventArgs) =>
+                {
+                    completed = true;
+                    error = eventArgs.Error;
+                };
+
             try
             {
-                compressor.Compress(options.InputFile, options.OutputFile);
-                resultCode = 0;
+                compressor.CompressAsync(options.InputFile, options.OutputFile);
 
-                Console.WriteLine("The file has been successfully compressed");
+                while (!completed)
+                {
+                    Thread.Sleep(500);
+                }
+
+                if (error != null)
+                {
+                    PrintError(error);
+                    resultCode = 1;
+                }
+                else
+                {
+                    Console.WriteLine("The file has been successfully compressed");
+                }
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An unexpected error has occured: {0}", exception.Message);
+                PrintError(exception);
             }
 
             return resultCode;
@@ -94,12 +122,16 @@ namespace VBessonov.GZip.CUI
 
         private static int Decompress(DecompressSubOptions options)
         {
-            int resultCode = 1;
+            int resultCode = 0;
             IDecompressor decompressor = new Decompressor();
 
-            if (options.WorkersCount.HasValue)
+            if (options.MinThreadsCount.HasValue)
             {
-                decompressor.Settings.WorkerPool.MaxCount = options.WorkersCount.Value;
+                decompressor.Settings.MinWorkersCount = options.MinThreadsCount.Value;
+            }
+            if (options.MaxThreadsCount.HasValue)
+            {
+                decompressor.Settings.MaxWorkersCount = options.MaxThreadsCount.Value;
             }
             if (options.AvailableMemorySize.HasValue)
             {
@@ -118,16 +150,38 @@ namespace VBessonov.GZip.CUI
                 decompressor.Settings.MemoryLoadThreshold = options.MemoryLoadThreshold.Value;
             }
 
+            Exception error = null;
+            bool completed = false;
+
+            decompressor.DecompressionCompleted +=
+                (sender, eventArgs) =>
+                {
+                    completed = true;
+                    error = eventArgs.Error;
+                };
+
             try
             {
-                decompressor.Decompress(options.InputFile, options.OutputFile);
-                resultCode = 0;
+                decompressor.DecompressAsync(options.InputFile, options.OutputFile);
 
-                Console.WriteLine("The file has been successfully decompressed");
+                while (!completed)
+                {
+                    Thread.Sleep(500);
+                }
+
+                if (error != null)
+                {
+                    PrintError(error);
+                    resultCode = 1;
+                }
+                else
+                {
+                    Console.WriteLine("The file has been successfully decompressed");
+                }
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An unexpected error has occured: {0}", exception.Message);
+                PrintError(exception);
             }
 
             return resultCode;
@@ -158,10 +212,43 @@ namespace VBessonov.GZip.CUI
             }
             catch (Exception exception)
             {
-                Console.WriteLine("An unexpected error has occured: {0}", exception.Message);
+                PrintError(exception);
             }
 
             return resultCode;
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            PrintError((Exception)args.ExceptionObject);
+        }
+
+        private static void PrintError(Exception error)
+        {
+            AggregateException aggregateException = error as AggregateException;
+
+            if (aggregateException != null)
+            {
+                aggregateException = aggregateException.Flatten();
+
+                if (aggregateException.InnerExceptions.Count == 1)
+                {
+                    PrintError(aggregateException.InnerException);
+                }
+                else
+                {
+                    Console.WriteLine("Unexpected errors have occured:");
+
+                    foreach (Exception innerException in aggregateException.InnerExceptions)
+                    {
+                        Console.WriteLine(innerException.Message);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("An unexpected error has occured: {0}", error.Message);
+            }
         }
 
         public static int Main(string[] args)
@@ -169,6 +256,7 @@ namespace VBessonov.GZip.CUI
             Options options = new Options();
             string invokedVerb;
             FileSubOptions invokedSubOptions;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             int resultCode = ParseCommandLine(options, args, out invokedVerb, out invokedSubOptions);
 

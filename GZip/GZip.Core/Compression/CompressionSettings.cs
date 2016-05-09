@@ -1,5 +1,5 @@
 ﻿using System;
-using VBessonov.GZip.Core.Compression.Workers;
+using VBessonov.GZip.Threads;
 
 namespace VBessonov.GZip.Core.Compression
 {
@@ -12,8 +12,6 @@ namespace VBessonov.GZip.Core.Compression
         private IProcessorFactory _processorFactory;
 
         private IReader _reader;
-
-        private ProcessorWorkerPool _workerPool;
 
         private IWriter _writer;
 
@@ -45,6 +43,18 @@ namespace VBessonov.GZip.Core.Compression
             }
         }
 
+        public int MinWorkersCount
+        {
+            get { return ThreadPool.MinCount; }
+            set { ThreadPool.MaxCount = value; }
+        }
+
+        public int MaxWorkersCount
+        {
+            get { return ThreadPool.MaxCount; }
+            set { ThreadPool.MaxCount = value; }
+        }
+
         public IProcessorFactory ProcessorFactory
         {
             get { return _processorFactory; }
@@ -56,7 +66,6 @@ namespace VBessonov.GZip.Core.Compression
                 }
 
                 _processorFactory = value;
-                _workerPool = new ProcessorWorkerPool(_processorFactory);
             }
         }
 
@@ -72,11 +81,6 @@ namespace VBessonov.GZip.Core.Compression
 
                 _reader = value;
             }
-        }
-
-        public ProcessorWorkerPool WorkerPool
-        {
-            get { return _workerPool; }
         }
 
         public IWriter Writer
@@ -99,7 +103,6 @@ namespace VBessonov.GZip.Core.Compression
             _reader = CreateDefaultReader();
             _writer = CreateDefaultWriter();
             _processorFactory = CreateProcessorFactory();
-            _workerPool = new ProcessorWorkerPool(_processorFactory);
         }
 
         protected abstract IInputQueueFactory CreateDefaultInputQueueFactory();

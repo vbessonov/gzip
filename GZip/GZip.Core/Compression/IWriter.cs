@@ -1,4 +1,4 @@
-﻿using VBessonov.GZip.Core.Compression.Workers;
+﻿using System;
 
 namespace VBessonov.GZip.Core.Compression
 {
