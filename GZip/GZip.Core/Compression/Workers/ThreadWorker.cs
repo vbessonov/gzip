@@ -6,11 +6,11 @@ namespace VBessonov.GZip.Core.Compression.Workers
 {
     public abstract class ThreadWorker<T> : IWorker<T>
     {
-        private readonly Thread _thread;
+        private readonly DistributedThread _thread;
 
         private readonly SendOrPostCallback _onCompetedCallback;
 
-        public Thread Thread
+        public DistributedThread Thread
         {
             get { return _thread; }
         }
@@ -19,10 +19,8 @@ namespace VBessonov.GZip.Core.Compression.Workers
 
         protected ThreadWorker()
         {
-            _thread = new Thread(ThreadBody)
-            {
-                IsBackground = true
-            };
+            _thread = new DistributedThread(ThreadBody);
+            _thread.ManagedThread.IsBackground = true;
             _onCompetedCallback = OnCompleted;
         }
 

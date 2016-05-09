@@ -9,7 +9,7 @@ namespace VBessonov.GZip.Core.Compression
     {
         private readonly List<ProcessorWorker> _workers = new List<ProcessorWorker>();
 
-        private int _maxCount = 1;
+        private int _maxCount = Environment.ProcessorCount;
 
         private IProcessorFactory _processorFactory;
 

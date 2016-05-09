@@ -68,6 +68,7 @@
     <Compile Include="Compression\IInputQueueFactory.cs" />
     <Compile Include="Compression\InputQueueFactory.cs" />
     <Compile Include="Compression\Streams\ChunkedStream.cs" />
+    <Compile Include="Compression\Workers\DistributedThread.cs" />
     <Compile Include="Compression\Workers\QueuedSynchronizationContext.cs" />
     <Compile Include="Compression\Workers\WorkCompletedEventArgs.cs" />
     <Compile Include="Compression\Workers\WorkCompletedEventHandler.cs" />

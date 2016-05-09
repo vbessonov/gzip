@@ -16,7 +16,7 @@ namespace VBessonov.GZip.Core.Compression
 
             _writer = writer;
 
-            Thread.Name = "Writer Worker";
+            Thread.ManagedThread.Name = "Writer Worker";
         }
 
         protected override void InternalWork(WorkerParameter<WriterWorkerParameter> parameter)

@@ -64,7 +64,7 @@ namespace VBessonov.GZip.Core.Compression
             {
                 foreach (ProcessorWorker compressionWorker in _settings.WorkerPool)
                 {
-                    compressionWorker.Thread.Join();
+                    compressionWorker.Thread.ManagedThread.Join();
                 }
             }
 
